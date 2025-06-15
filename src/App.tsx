@@ -1,8 +1,6 @@
 import React from "react";
 import { Tabs, Tab } from "@heroui/react";
 import { Dashboard } from "./components/dashboard";
-import { Settings } from "./components/settings";
-import { Reports } from "./components/reports";
 import { Header } from "./components/header";
 import { NotificationsProvider } from "./context/notifications-context";
 
@@ -24,12 +22,6 @@ export default function App() {
           >
             <Tab key="dashboard" title="Dashboard">
               <Dashboard />
-            </Tab>
-            <Tab key="reports" title="Informes">
-              <Reports />
-            </Tab>
-            <Tab key="settings" title="Configuración">
-              <Settings />
             </Tab>
           </Tabs>
         </main>

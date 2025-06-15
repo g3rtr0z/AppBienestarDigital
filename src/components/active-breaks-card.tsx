@@ -156,32 +156,6 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
             )}
           </div>
           
-          <div className="flex-1">
-            <p className="font-medium mb-3">Ejercicios recomendados</p>
-            <div className="space-y-3">
-              {exercises.map((exercise) => (
-                <div 
-                  key={exercise.id} 
-                  className="flex items-center gap-3 p-3 rounded-md bg-content2"
-                >
-                  <div className={`p-2 rounded-md ${exercise.completed ? 'bg-success-100' : 'bg-default-100'}`}>
-                    <Icon 
-                      icon={exercise.icon} 
-                      className={exercise.completed ? 'text-success' : 'text-default-500'} 
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-small font-medium">{exercise.name}</p>
-                  </div>
-                  {exercise.completed ? (
-                    <Chip color="success" size="sm" variant="flat">Completado</Chip>
-                  ) : (
-                    <Chip color="default" size="sm" variant="flat">Pendiente</Chip>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </CardBody>
       <CardFooter>

@@ -103,26 +103,6 @@ export const ScreenTimeCard: React.FC = () => {
         
         <div className="flex justify-between text-small">
           <div>
-            <p className="font-medium">Aplicaciones más usadas</p>
-            <div className="flex items-center mt-2 gap-2">
-              <Tooltip content="Navegador">
-                <div className="p-2 bg-primary-100 rounded-md">
-                  <Icon icon="lucide:globe" className="text-primary" />
-                </div>
-              </Tooltip>
-              <Tooltip content="Documentos">
-                <div className="p-2 bg-warning-100 rounded-md">
-                  <Icon icon="lucide:file-text" className="text-warning" />
-                </div>
-              </Tooltip>
-              <Tooltip content="Correo">
-                <div className="p-2 bg-success-100 rounded-md">
-                  <Icon icon="lucide:mail" className="text-success" />
-                </div>
-              </Tooltip>
-            </div>
-          </div>
-          <div>
             <p className="font-medium">Tiempo restante hoy</p>
             <p className="text-xl font-bold mt-1">{8 - hours}h {60 - minutes}m</p>
           </div>
