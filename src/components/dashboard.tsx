@@ -2,14 +2,17 @@ import React from "react";
 import { Card, CardBody, CardHeader, CardFooter, Button, Progress } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { ScreenTimeCard } from "./screen-time-card";
+import { useSettings } from "../context/settings-context";
 import { HydrationReminder } from "./hydration-reminder";
 import { ActiveBreaksCard } from "./active-breaks-card";
 import { useNotifications } from "../context/notifications-context";
+
 import { motion } from "framer-motion";
 
 export const Dashboard: React.FC = () => {
+  const { screenTimeLimit } = useSettings();
   const { addNotification } = useNotifications();
-  
+
   const handleBreakNow = () => {
     addNotification({
       id: Date.now().toString(),
@@ -21,13 +24,13 @@ export const Dashboard: React.FC = () => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <motion.div 
+      <motion.div
         className="lg:col-span-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -44,7 +47,7 @@ export const Dashboard: React.FC = () => {
         <HydrationReminder />
       </motion.div>
 
-      <motion.div 
+      <motion.div
         className="lg:col-span-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -75,7 +78,7 @@ export const Dashboard: React.FC = () => {
                 </div>
                 <Progress value={65} color="success" className="h-2" />
               </div>
-              
+
               <div>
                 <div className="flex justify-between mb-1">
                   <span className="text-small font-medium">Pausas activas</span>
@@ -83,7 +86,7 @@ export const Dashboard: React.FC = () => {
                 </div>
                 <Progress value={45} color="warning" className="h-2" />
               </div>
-              
+
               <div>
                 <div className="flex justify-between mb-1">
                   <span className="text-small font-medium">Hidratación</span>
@@ -94,9 +97,9 @@ export const Dashboard: React.FC = () => {
             </div>
           </CardBody>
           <CardFooter>
-            <Button 
-              color="primary" 
-              variant="flat" 
+            <Button
+              color="primary"
+              variant="flat"
               startContent={<Icon icon="lucide:refresh-cw" />}
               fullWidth
             >

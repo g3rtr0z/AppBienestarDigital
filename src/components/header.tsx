@@ -15,18 +15,6 @@ export const Header: React.FC = () => {
       </NavbarBrand>
 
       <NavbarContent justify="end">
-        <Tooltip content="Notificaciones">
-          <Badge content={unreadCount} isInvisible={unreadCount === 0} color="danger">
-            <Button 
-              isIconOnly 
-              variant="light" 
-              aria-label="Notificaciones"
-              onPress={markAllAsRead}
-            >
-              <Icon icon="lucide:bell" className="text-xl" />
-            </Button>
-          </Badge>
-        </Tooltip>
         <Tooltip content="Perfil">
           <Button isIconOnly variant="light" aria-label="Perfil">
             <Icon icon="lucide:user" className="text-xl" />

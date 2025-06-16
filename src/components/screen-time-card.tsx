@@ -1,7 +1,22 @@
-import React from "react";
-import { Card, CardBody, CardHeader, CardFooter, Button, Tooltip } from "@heroui/react";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardFooter,
+  Button,
+  Tooltip,
+} from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from "recharts";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 const screenTimeData = [
   { hour: "8AM", minutes: 25 },
@@ -17,9 +32,43 @@ const screenTimeData = [
 ];
 
 export const ScreenTimeCard: React.FC = () => {
-  const totalScreenTime = screenTimeData.reduce((acc, curr) => acc + curr.minutes, 0);
-  const hours = Math.floor(totalScreenTime / 60);
-  const minutes = totalScreenTime % 60;
+
+  // --- Estados del Control de Pantalla ---
+  const [screenTimeLimit, setScreenTimeLimit] = useState(480); // Límite diario (min)
+  const [elapsedScreenTimeSeconds, setElapsedScreenTimeSeconds] = useState(0); // Cronómetro (seg)
+  const [currentScreenTime, setCurrentScreenTime] = useState(0); // Tiempo actual (min)
+  const remainingTimeSeconds = Math.max(0, screenTimeLimit * 60 - elapsedScreenTimeSeconds);
+  const remainingHours = Math.floor(remainingTimeSeconds / 3600);
+  const remainingMin = Math.floor((remainingTimeSeconds % 3600) / 60);
+  const remainingSeconds = remainingTimeSeconds % 60;
+  const [isScreenTimeTrackingRunning, setIsScreenTimeTrackingRunning] = useState(false); // Seguimiento activo
+  const screenTimeIntervalRef = useRef<NodeJS.Timeout | null>(null); // Referencia del intervalo
+  const screenBreakRecommendationInterval = 60; // Intervalo de descanso (min)
+
+  // Efecto para manejar el seguimiento del tiempo
+  useEffect(() => {
+    if (isScreenTimeTrackingRunning) {
+      screenTimeIntervalRef.current = setInterval(() => {
+        setElapsedScreenTimeSeconds((prev) => prev + 1);
+      }, 1000);
+    } else {
+      if (screenTimeIntervalRef.current) clearInterval(screenTimeIntervalRef.current);
+    }
+
+    return () => {
+      if (screenTimeIntervalRef.current) clearInterval(screenTimeIntervalRef.current);
+    };
+  }, [isScreenTimeTrackingRunning]);
+
+  // Efecto para actualizar el tiempo actual en minutos
+  useEffect(() => {
+    if (elapsedScreenTimeSeconds % 60 === 0 && elapsedScreenTimeSeconds !== 0) {
+      setCurrentScreenTime((prev) => prev + 1);
+    }
+  }, [elapsedScreenTimeSeconds]);
+
+  const hours = Math.floor(currentScreenTime / 60);
+  const minutes = currentScreenTime % 60;
 
   return (
     <Card className="h-full">
@@ -48,7 +97,9 @@ export const ScreenTimeCard: React.FC = () => {
                   className="text-primary progress-ring"
                   strokeWidth="8"
                   strokeDasharray={58 * 2 * Math.PI}
-                  strokeDashoffset={58 * 2 * Math.PI * (1 - totalScreenTime / 480)}
+                  strokeDashoffset={
+                    58 * 2 * Math.PI * (1 - currentScreenTime / screenTimeLimit)
+                  }
                   strokeLinecap="round"
                   stroke="currentColor"
                   fill="transparent"
@@ -58,12 +109,14 @@ export const ScreenTimeCard: React.FC = () => {
                 />
               </svg>
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                <p className="text-2xl font-bold">{hours}h {minutes}m</p>
-                <p className="text-xs text-default-500">de 8h límite</p>
+                <p className="text-2xl font-bold">
+                  {hours}h {minutes}m
+                </p>
+                <p className="text-xs text-default-500">de {screenTimeLimit / 60}h límite</p>
               </div>
             </div>
           </div>
-          
+
           <div className="flex-1 h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
@@ -72,52 +125,86 @@ export const ScreenTimeCard: React.FC = () => {
               >
                 <defs>
                   <linearGradient id="colorMinutes" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--heroui-primary))" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="hsl(var(--heroui-primary))" stopOpacity={0} />
+                    <stop
+                      offset="5%"
+                      stopColor="hsl(var(--heroui-primary))"
+                      stopOpacity={0.3}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="hsl(var(--heroui-primary))"
+                      stopOpacity={0}
+                    />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--heroui-default-200))" />
-                <XAxis dataKey="hour" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
-                <YAxis 
-                  tick={{ fontSize: 12 }} 
-                  axisLine={false} 
-                  tickLine={false} 
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="hsl(var(--heroui-default-200))"
+                />
+                <XAxis
+                  dataKey="hour"
+                  tick={{ fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
                   tickFormatter={(value) => `${value}m`}
                 />
-                <RechartsTooltip 
-                  formatter={(value: number) => [`${value} minutos`, 'Tiempo de pantalla']}
+                <RechartsTooltip
+                  formatter={(value: number) => [`${value} minutos`, "Tiempo de pantalla"]}
                   labelFormatter={(label) => `${label}`}
                 />
-                <Area 
-                  type="monotone" 
-                  dataKey="minutes" 
-                  stroke="hsl(var(--heroui-primary))" 
-                  fillOpacity={1} 
-                  fill="url(#colorMinutes)" 
+                <Area
+                  type="monotone"
+                  dataKey="minutes"
+                  stroke="hsl(var(--heroui-primary))"
+                  fillOpacity={1}
+                  fill="url(#colorMinutes)"
                   strokeWidth={2}
                 />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
-        
-        <div className="flex justify-between text-small">
-          <div>
-            <p className="font-medium">Tiempo restante hoy</p>
-            <p className="text-xl font-bold mt-1">{8 - hours}h {60 - minutes}m</p>
+        <CardBody>
+          <div className="flex justify-between text-small flex-col md:flex-row gap-4 md:gap-0 px-6 pb-2">
+            <div>
+              <p className="font-medium">Tiempo restante hoy</p>
+              <p className="text-xl font-bold mt-1">{remainingHours}h {remainingMin}m {remainingSeconds}s</p>
+            </div>
           </div>
-        </div>
+        </CardBody>
       </CardBody>
-      <CardFooter>
-        <Button 
-          color="primary" 
-          variant="flat" 
-          startContent={<Icon icon="lucide:settings" />}
+      <CardFooter className="flex gap-2">
+        <Button
+          color="primary"
+          variant={isScreenTimeTrackingRunning ? "flat" : "solid"}
+          startContent={<Icon icon={isScreenTimeTrackingRunning ? "lucide:pause" : "lucide:play"} />}
           fullWidth
+          onClick={() => setIsScreenTimeTrackingRunning((prev) => !prev)}
         >
-          Ajustar límites
+          {isScreenTimeTrackingRunning ? "Pausar" : "Iniciar"}
         </Button>
+        <Button
+          color="danger"
+          variant="flat"
+          startContent={<Icon icon="lucide:rotate-ccw" />}
+          fullWidth
+          onClick={() => {
+            setElapsedScreenTimeSeconds(0);
+            setCurrentScreenTime(0);
+            setIsScreenTimeTrackingRunning(false);
+          }}
+        >
+          Reiniciar
+        </Button>
+
       </CardFooter>
+
     </Card>
   );
 };
