@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Card,
   CardBody,
@@ -17,6 +17,8 @@ import {
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useAppState } from "../context/app-state-context";
+import { useSettings } from "../context/settings-context";
 
 const screenTimeData = [
   { hour: "8AM", minutes: 25 },
@@ -32,21 +34,21 @@ const screenTimeData = [
 ];
 
 export const ScreenTimeCard: React.FC = () => {
+  // Usa el contexto global para el estado de tiempo de pantalla
+  const {
+    elapsedScreenTimeSeconds, setElapsedScreenTimeSeconds,
+    currentScreenTime, setCurrentScreenTime,
+    isScreenTimeTrackingRunning, setIsScreenTimeTrackingRunning,
+    screenTimeHistory, setScreenTimeHistory
+  } = useAppState();
+  const { screenTimeLimit } = useSettings();
 
-  // --- Estados del Control de Pantalla ---
-  const [screenTimeLimit, setScreenTimeLimit] = useState(480); // Límite diario (min)
-  const [elapsedScreenTimeSeconds, setElapsedScreenTimeSeconds] = useState(0); // Cronómetro (seg)
-  const [currentScreenTime, setCurrentScreenTime] = useState(0); // Tiempo actual (min)
-  const remainingTimeSeconds = Math.max(0, screenTimeLimit * 60 - elapsedScreenTimeSeconds);
+  const remainingTimeSeconds = Math.max(0, (screenTimeLimit * 3600) - elapsedScreenTimeSeconds);
   const remainingHours = Math.floor(remainingTimeSeconds / 3600);
   const remainingMin = Math.floor((remainingTimeSeconds % 3600) / 60);
   const remainingSeconds = remainingTimeSeconds % 60;
-  const [isScreenTimeTrackingRunning, setIsScreenTimeTrackingRunning] = useState(false); // Seguimiento activo
-  // Corregido: usar tipo Timer en lugar de NodeJS.Timeout para compatibilidad con navegadores
-  const screenTimeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null); // Referencia del intervalo
-  const screenBreakRecommendationInterval = 60; // Intervalo de descanso (min)
+  const screenTimeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Efecto para manejar el seguimiento del tiempo
   useEffect(() => {
     if (isScreenTimeTrackingRunning) {
       screenTimeIntervalRef.current = setInterval(() => {
@@ -59,14 +61,13 @@ export const ScreenTimeCard: React.FC = () => {
     return () => {
       if (screenTimeIntervalRef.current) clearInterval(screenTimeIntervalRef.current);
     };
-  }, [isScreenTimeTrackingRunning]);
+  }, [isScreenTimeTrackingRunning, setElapsedScreenTimeSeconds]);
 
-  // Efecto para actualizar el tiempo actual en minutos
   useEffect(() => {
     if (elapsedScreenTimeSeconds % 60 === 0 && elapsedScreenTimeSeconds !== 0) {
       setCurrentScreenTime((prev) => prev + 1);
     }
-  }, [elapsedScreenTimeSeconds]);
+  }, [elapsedScreenTimeSeconds, setCurrentScreenTime]);
 
   const hours = Math.floor(currentScreenTime / 60);
   const minutes = currentScreenTime % 60;
@@ -113,7 +114,7 @@ export const ScreenTimeCard: React.FC = () => {
                 <p className="text-2xl font-bold">
                   {hours}h {minutes}m
                 </p>
-                <p className="text-xs text-default-500">de {screenTimeLimit / 60}h límite</p>
+                <p className="text-xs text-default-500">de {screenTimeLimit}h límite</p>
               </div>
             </div>
           </div>

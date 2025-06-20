@@ -17,6 +17,32 @@ export const Settings: React.FC = () => {
     theme, setTheme
   } = useSettings();
 
+  const handleRestoreDefaults = () => {
+    setScreenTimeLimit(8);
+    setWaterGoal(8);
+    setBreakInterval(25);
+    setBreakDuration(5);
+    setNotificationsEnabled(true);
+    setSoundEnabled(true);
+    setAccessibilityMode(false);
+    setTheme("system");
+
+    // Guardar los valores por defecto en localStorage
+    const defaultSettings = {
+      screenTimeLimit: 8,
+      waterGoal: 8,
+      breakInterval: 25,
+      breakDuration: 5,
+      notificationsEnabled: true,
+      soundEnabled: true,
+      accessibilityMode: false,
+      theme: "system"
+    };
+
+    localStorage.setItem("userSettings", JSON.stringify(defaultSettings));
+    console.log("Valores predeterminados restaurados:", defaultSettings);
+  };
+
   const handleSaveSettings = () => {
     const settings = {
       screenTimeLimit,
@@ -77,24 +103,6 @@ export const Settings: React.FC = () => {
               className="max-w-md"
             />
           </div>
-
-          <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="font-medium">Notificaciones de límite</p>
-                <p className="text-small text-default-500">Avisar cuando se acerque al límite</p>
-              </div>
-              <Switch isSelected={true} />
-            </div>
-
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="font-medium">Bloqueo automático</p>
-                <p className="text-small text-default-500">Bloquear apps al alcanzar el límite</p>
-              </div>
-              <Switch isSelected={false} />
-            </div>
-          </div>
         </CardBody>
       </Card>
 
@@ -132,14 +140,6 @@ export const Settings: React.FC = () => {
               className="max-w-md"
             />
           </div>
-
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="font-medium">Pausas forzadas</p>
-              <p className="text-small text-default-500">Mostrar pantalla de pausa obligatoria</p>
-            </div>
-            <Switch isSelected={true} />
-          </div>
         </CardBody>
       </Card>
 
@@ -166,13 +166,6 @@ export const Settings: React.FC = () => {
           </div>
 
           <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="font-medium">Recordatorios automáticos</p>
-                <p className="text-small text-default-500">Notificar periódicamente</p>
-              </div>
-              <Switch isSelected={true} />
-            </div>
 
             <div className="max-w-xs">
               <p className="text-small font-medium mb-2">Intervalo de recordatorio</p>
@@ -221,40 +214,13 @@ export const Settings: React.FC = () => {
                 onValueChange={setSoundEnabled}
               />
             </div>
-
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="font-medium">Modo de accesibilidad</p>
-                <p className="text-small text-default-500">Mayor contraste y texto más grande</p>
-              </div>
-              <Switch
-                isSelected={accessibilityMode}
-                onValueChange={setAccessibilityMode}
-              />
-            </div>
-
-            <div className="max-w-xs">
-              <p className="text-small font-medium mb-2">Tema</p>
-              <Select
-                label="Tema"
-                defaultSelectedKeys={[theme]}
-                onSelectionChange={(keys) => setTheme(Array.from(keys)[0] as string)}
-              >
-                <SelectItem key="light">Claro</SelectItem>
-                <SelectItem key="dark">Oscuro</SelectItem>
-                <SelectItem key="system">Sistema</SelectItem>
-              </Select>
-            </div>
           </div>
         </CardBody>
       </Card>
 
       <div className="flex justify-end gap-2">
-        <Button variant="flat" color="default">
+        <Button variant="flat" color="default" onPress={handleRestoreDefaults}>
           Restaurar valores predeterminados
-        </Button>
-        <Button color="primary" onPress={handleSaveSettings}>
-          Guardar configuración
         </Button>
       </div>
     </motion.div>

@@ -3,7 +3,11 @@ import { Navbar, NavbarBrand, NavbarContent, Button, Tooltip, Badge } from "@her
 import { Icon } from "@iconify/react";
 import { useNotifications } from "../context/notifications-context";
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  onSettingsClick: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ onSettingsClick }) => {
   const { notifications, markAllAsRead } = useNotifications();
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -15,6 +19,16 @@ export const Header: React.FC = () => {
       </NavbarBrand>
 
       <NavbarContent justify="end">
+        <Tooltip content="Configuraciones">
+          <Button 
+            isIconOnly 
+            variant="light" 
+            aria-label="Configuraciones"
+            onPress={onSettingsClick}
+          >
+            <Icon icon="lucide:settings" className="text-xl" />
+          </Button>
+        </Tooltip>
         <Tooltip content="Perfil">
           <Button isIconOnly variant="light" aria-label="Perfil">
             <Icon icon="lucide:user" className="text-xl" />

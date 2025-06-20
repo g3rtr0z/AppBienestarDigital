@@ -5,17 +5,20 @@ import App from "./App";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { SettingsProvider } from "./context/settings-context";
+import { AppStateProvider } from "./context/app-state-context";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>
 		<HeroUIProvider>
 			<SettingsProvider>
-				<BrowserRouter>
-					<main className="text-foreground bg-background">
-						<App />
-					</main>
+				<AppStateProvider>
+					<BrowserRouter>
+						<main className="text-foreground bg-background">
+							<App />
+						</main>
 
-				</BrowserRouter>
+					</BrowserRouter>
+				</AppStateProvider>
 			</SettingsProvider>
 		</HeroUIProvider>
 	</React.StrictMode>

@@ -2,14 +2,14 @@ import React from "react";
 import { Card, CardBody, CardHeader, CardFooter, Button, Progress } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { useNotifications } from "../context/notifications-context";
+import { useAppState } from "../context/app-state-context";
+import { useSettings } from "../context/settings-context";
 import { motion } from "framer-motion";
 
 export const HydrationReminder: React.FC = () => {
-  const [waterIntake, setWaterIntake] = React.useState<number>(0);
-  const [nextReminder, setNextReminder] = React.useState<number | null>(null); // null = no iniciado
+  const { waterIntake, setWaterIntake, nextReminder, setNextReminder, mostrarRecordatorio, setMostrarRecordatorio } = useAppState();
   const { addNotification } = useNotifications();
-  const goalIntake = 8;
-  const [mostrarRecordatorio, setMostrarRecordatorio] = React.useState<boolean>(false);
+  const { waterGoal } = useSettings();
 
   React.useEffect(() => {
     if (nextReminder === null) return; // si no hay contador activo, no hacer nada
@@ -43,10 +43,10 @@ export const HydrationReminder: React.FC = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [nextReminder, addNotification]);
+  }, [nextReminder, addNotification, setNextReminder, setMostrarRecordatorio]);
 
   const handleAddWater = () => {
-    if (waterIntake < goalIntake) {
+    if (waterIntake < waterGoal) {
       setWaterIntake((prev) => prev + 1);
 
       // Si no hay contador, iniciar el recordatorio:
@@ -89,7 +89,7 @@ export const HydrationReminder: React.FC = () => {
                 strokeWidth="2"
               />
               <motion.path
-                d={`M30,${150 - (waterIntake / goalIntake) * 140} L90,${150 - (waterIntake / goalIntake) * 140} L80,150 C80,155 70,160 60,160 C50,160 40,155 40,150 Z`}
+                d={`M30,${150 - (waterIntake / waterGoal) * 140} L90,${150 - (waterIntake / waterGoal) * 140} L80,150 C80,155 70,160 60,160 C50,160 40,155 40,150 Z`}
                 fill="hsl(var(--heroui-primary-200))"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.8 }}
@@ -97,7 +97,7 @@ export const HydrationReminder: React.FC = () => {
               />
             </svg>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-              <p className="text-2xl font-bold">{waterIntake}/{goalIntake}</p>
+              <p className="text-2xl font-bold">{waterIntake}/{waterGoal}</p>
               <p className="text-xs text-default-500">vasos</p>
             </div>
           </motion.div>
@@ -106,10 +106,10 @@ export const HydrationReminder: React.FC = () => {
         <div className="w-full">
           <div className="flex justify-between mb-1">
             <span className="text-small">Progreso</span>
-            <span className="text-small">{Math.round((waterIntake / goalIntake) * 100)}%</span>
+            <span className="text-small">{Math.round((waterIntake / waterGoal) * 100)}%</span>
           </div>
           <Progress
-            value={(waterIntake / goalIntake) * 100}
+            value={(waterIntake / waterGoal) * 100}
             color="primary"
             className="h-2"
           />
@@ -122,7 +122,7 @@ export const HydrationReminder: React.FC = () => {
               {Math.floor(nextReminder / 60)}:{(nextReminder % 60).toString().padStart(2, '0')}
             </p>
           ) : (
-            <p className="text-xl font-semibold">--:--</p>
+            <p className="text-xl font-semibold">00:00</p>
           )}
         </div>
       </CardBody>
@@ -132,7 +132,7 @@ export const HydrationReminder: React.FC = () => {
           startContent={<Icon icon="lucide:plus" />}
           fullWidth
           onPress={handleAddWater}
-          isDisabled={waterIntake >= goalIntake}
+          isDisabled={waterIntake >= waterGoal}
         >
           Registrar vaso
         </Button>
