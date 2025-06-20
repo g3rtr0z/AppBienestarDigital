@@ -38,3 +38,84 @@ body {
   max-width: 100% !important;
   min-width: 100% !important;
 }
+
+/* Prevenir zoom automático en dispositivos móviles */
+@media screen and (max-width: 768px) {
+  input[type="email"],
+  input[type="password"],
+  input[type="text"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"] {
+    font-size: 16px !important;
+    transform: none !important;
+    zoom: 1 !important;
+  }
+  
+  /* Prevenir zoom en inputs de HeroUI */
+  [data-slot="input"] {
+    font-size: 16px !important;
+    transform: none !important;
+    zoom: 1 !important;
+  }
+  
+  /* Mantener perspectiva en modales y formularios */
+  .modal-content,
+  form {
+    transform: none !important;
+    zoom: 1 !important;
+  }
+  
+  /* Prevenir zoom en el viewport */
+  @viewport {
+    zoom: 1;
+    min-zoom: 1;
+    max-zoom: 1;
+  }
+}
+
+/* Estilos específicos para iPhone */
+@supports (-webkit-touch-callout: none) {
+  input[type="email"],
+  input[type="password"],
+  input[type="text"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"] {
+    font-size: 16px !important;
+    -webkit-appearance: none;
+    border-radius: 0;
+  }
+  
+  [data-slot="input"] {
+    font-size: 16px !important;
+    -webkit-appearance: none;
+  }
+  
+  /* Prevenir zoom en Safari */
+  body {
+    -webkit-text-size-adjust: 100%;
+  }
+  
+  /* Estilos específicos para modales de autenticación en iPhone */
+  [role="dialog"],
+  [data-slot="modal"] {
+    transform: none !important;
+    zoom: 1 !important;
+    -webkit-transform: none !important;
+  }
+  
+  /* Prevenir zoom en formularios de autenticación */
+  form[class*="space-y-4"] {
+    transform: none !important;
+    zoom: 1 !important;
+    -webkit-transform: none !important;
+  }
+  
+  /* Asegurar que los inputs mantengan su tamaño */
+  .input-fixed {
+    transform: none !important;
+    zoom: 1 !important;
+    -webkit-transform: none !important;
+  }
+}
