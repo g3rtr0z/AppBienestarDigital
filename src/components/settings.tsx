@@ -6,14 +6,16 @@ import { useSettings } from "../context/settings-context";
 
 
 export const Settings: React.FC = () => {
-  const { screenTimeLimit, setScreenTimeLimit } = useSettings();
-  const [waterGoal, setWaterGoal] = React.useState<number>(8);
-  const [breakInterval, setBreakInterval] = React.useState<number>(25);
-  const [breakDuration, setBreakDuration] = React.useState<number>(5);
-  const [notificationsEnabled, setNotificationsEnabled] = React.useState<boolean>(true);
-  const [soundEnabled, setSoundEnabled] = React.useState<boolean>(true);
-  const [accessibilityMode, setAccessibilityMode] = React.useState<boolean>(false);
-  const [theme, setTheme] = React.useState<string>("system");
+  const {
+    screenTimeLimit, setScreenTimeLimit,
+    waterGoal, setWaterGoal,
+    breakInterval, setBreakInterval,
+    breakDuration, setBreakDuration,
+    notificationsEnabled, setNotificationsEnabled,
+    soundEnabled, setSoundEnabled,
+    accessibilityMode, setAccessibilityMode,
+    theme, setTheme
+  } = useSettings();
 
   const handleSaveSettings = () => {
     const settings = {
@@ -71,7 +73,7 @@ export const Settings: React.FC = () => {
               minValue={1}
               maxValue={12}
               value={screenTimeLimit}
-              onChange={setScreenTimeLimit}
+              onChange={value => setScreenTimeLimit(Array.isArray(value) ? value[0] : value)}
               className="max-w-md"
             />
           </div>
@@ -113,7 +115,7 @@ export const Settings: React.FC = () => {
               minValue={15}
               maxValue={60}
               value={breakInterval}
-              onChange={setBreakInterval}
+              onChange={value => setBreakInterval(Array.isArray(value) ? value[0] : value)}
               className="max-w-md"
             />
           </div>
@@ -126,7 +128,7 @@ export const Settings: React.FC = () => {
               minValue={1}
               maxValue={15}
               value={breakDuration}
-              onChange={setBreakDuration}
+              onChange={value => setBreakDuration(Array.isArray(value) ? value[0] : value)}
               className="max-w-md"
             />
           </div>
@@ -158,7 +160,7 @@ export const Settings: React.FC = () => {
               minValue={4}
               maxValue={12}
               value={waterGoal}
-              onChange={setWaterGoal}
+              onChange={value => setWaterGoal(Array.isArray(value) ? value[0] : value)}
               className="max-w-md"
             />
           </div>
@@ -178,10 +180,10 @@ export const Settings: React.FC = () => {
                 label="Intervalo"
                 defaultSelectedKeys={["45"]}
               >
-                <SelectItem key="30" value="30">Cada 30 minutos</SelectItem>
-                <SelectItem key="45" value="45">Cada 45 minutos</SelectItem>
-                <SelectItem key="60" value="60">Cada 1 hora</SelectItem>
-                <SelectItem key="90" value="90">Cada 1.5 horas</SelectItem>
+                <SelectItem key="30">Cada 30 minutos</SelectItem>
+                <SelectItem key="45">Cada 45 minutos</SelectItem>
+                <SelectItem key="60">Cada 1 hora</SelectItem>
+                <SelectItem key="90">Cada 1.5 horas</SelectItem>
               </Select>
             </div>
           </div>
@@ -236,11 +238,11 @@ export const Settings: React.FC = () => {
               <Select
                 label="Tema"
                 defaultSelectedKeys={[theme]}
-                onChange={(e) => setTheme(e.target.value)}
+                onSelectionChange={(keys) => setTheme(Array.from(keys)[0] as string)}
               >
-                <SelectItem key="light" value="light">Claro</SelectItem>
-                <SelectItem key="dark" value="dark">Oscuro</SelectItem>
-                <SelectItem key="system" value="system">Sistema</SelectItem>
+                <SelectItem key="light">Claro</SelectItem>
+                <SelectItem key="dark">Oscuro</SelectItem>
+                <SelectItem key="system">Sistema</SelectItem>
               </Select>
             </div>
           </div>

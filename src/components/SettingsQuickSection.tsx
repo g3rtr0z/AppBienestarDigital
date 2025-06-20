@@ -24,7 +24,7 @@ export const SettingsQuickSection: React.FC = () => {
             maxValue={12}
             step={1}
             value={screenTimeLimit}
-            onChange={setScreenTimeLimit}
+            onChange={value => setScreenTimeLimit(Array.isArray(value) ? value[0] : value)}
             className="max-w-md"
           />
         </CardBody>
@@ -46,7 +46,7 @@ export const SettingsQuickSection: React.FC = () => {
             maxValue={12}
             step={1}
             value={waterGoal}
-            onChange={setWaterGoal}
+            onChange={value => setWaterGoal(Array.isArray(value) ? value[0] : value)}
             className="max-w-md"
           />
         </CardBody>

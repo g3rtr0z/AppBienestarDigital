@@ -42,7 +42,8 @@ export const ScreenTimeCard: React.FC = () => {
   const remainingMin = Math.floor((remainingTimeSeconds % 3600) / 60);
   const remainingSeconds = remainingTimeSeconds % 60;
   const [isScreenTimeTrackingRunning, setIsScreenTimeTrackingRunning] = useState(false); // Seguimiento activo
-  const screenTimeIntervalRef = useRef<NodeJS.Timeout | null>(null); // Referencia del intervalo
+  // Corregido: usar tipo Timer en lugar de NodeJS.Timeout para compatibilidad con navegadores
+  const screenTimeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null); // Referencia del intervalo
   const screenBreakRecommendationInterval = 60; // Intervalo de descanso (min)
 
   // Efecto para manejar el seguimiento del tiempo
@@ -117,7 +118,7 @@ export const ScreenTimeCard: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex-1 h-64">
+          <div className="w-full h-40 md:h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={screenTimeData}
