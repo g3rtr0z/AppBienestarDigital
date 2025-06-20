@@ -182,16 +182,6 @@ export const Dashboard: React.FC = () => {
               )}
             </div>
           </CardBody>
-          <CardFooter>
-            <Button
-              color="primary"
-              variant="flat"
-              startContent={<Icon icon="lucide:refresh-cw" />}
-              fullWidth
-            >
-              Actualizar estado
-            </Button>
-          </CardFooter>
         </Card>
       </motion.div>
     </motion.div>

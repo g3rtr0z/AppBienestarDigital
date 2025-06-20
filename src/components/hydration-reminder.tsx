@@ -129,15 +129,19 @@ export const HydrationReminder: React.FC = () => {
         </div>
 
         <div className="mt-6 text-center">
-          <p className="text-small text-default-500">Próximo recordatorio en</p>
           {waterIntake >= waterGoal ? (
             <p className="text-xl font-semibold text-success">¡Meta completada!</p>
-          ) : nextReminder !== null && nextReminder !== undefined ? (
-            <p className="text-xl font-semibold">
-              {Math.floor(nextReminder / 60)}:{(nextReminder % 60).toString().padStart(2, '0')}
-            </p>
           ) : (
-            <p className="text-xl font-semibold">00:00</p>
+            <>
+              <p className="text-small text-default-500">Próximo recordatorio en</p>
+              {nextReminder !== null && nextReminder !== undefined ? (
+                <p className="text-xl font-semibold">
+                  {Math.floor(nextReminder / 60)}:{(nextReminder % 60).toString().padStart(2, '0')}
+                </p>
+              ) : (
+                <p className="text-xl font-semibold">00:00</p>
+              )}
+            </>
           )}
         </div>
       </CardBody>
