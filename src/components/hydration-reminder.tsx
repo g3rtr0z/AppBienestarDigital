@@ -13,12 +13,18 @@ export const HydrationReminder: React.FC = () => {
 
   // Iniciar el recordatorio automáticamente al cargar el componente
   React.useEffect(() => {
-    if (nextReminder === null) {
+    if (nextReminder === null && waterIntake < waterGoal) {
       setNextReminder(45 * 60); // iniciar contador 45 minutos
     }
-  }, [setNextReminder]);
+  }, [setNextReminder, waterIntake, waterGoal]);
 
   React.useEffect(() => {
+    // Detener recordatorios si ya se alcanzó la meta
+    if (waterIntake >= waterGoal) {
+      setNextReminder(null);
+      return;
+    }
+
     if (nextReminder === null) return; // si no hay contador activo, no hacer nada
 
     const REMINDER_INTERVAL = 45 * 60; // 45 minutos
@@ -50,16 +56,14 @@ export const HydrationReminder: React.FC = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [nextReminder, addNotification, setNextReminder, setMostrarRecordatorio, notificationsEnabled]);
+  }, [nextReminder, addNotification, setNextReminder, setMostrarRecordatorio, notificationsEnabled, waterIntake, waterGoal]);
 
   const handleAddWater = () => {
     if (waterIntake < waterGoal) {
       setWaterIntake((prev) => prev + 1);
 
-      // Si no hay contador, iniciar el recordatorio:
-      if (nextReminder === null) {
-        setNextReminder(45 * 60); // iniciar contador 45 minutos
-      }
+      // Reiniciar el recordatorio cada vez que se toma un vaso
+      setNextReminder(45 * 60); // reiniciar contador 45 minutos
 
       if (notificationsEnabled) {
         addNotification({
@@ -126,7 +130,9 @@ export const HydrationReminder: React.FC = () => {
 
         <div className="mt-6 text-center">
           <p className="text-small text-default-500">Próximo recordatorio en</p>
-          {nextReminder !== null && nextReminder !== undefined ? (
+          {waterIntake >= waterGoal ? (
+            <p className="text-xl font-semibold text-success">¡Meta completada!</p>
+          ) : nextReminder !== null && nextReminder !== undefined ? (
             <p className="text-xl font-semibold">
               {Math.floor(nextReminder / 60)}:{(nextReminder % 60).toString().padStart(2, '0')}
             </p>
