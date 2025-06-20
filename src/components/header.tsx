@@ -5,12 +5,14 @@ import { useNotifications } from "../context/notifications-context";
 import { useAuth } from "../context/auth-context";
 import { AuthContainer } from "./auth/AuthContainer";
 import { Settings } from "./settings";
+import { Profile } from "./Profile";
 
 export const Header: React.FC = () => {
   const { notifications, markAllAsRead } = useNotifications();
   const { currentUser, logout } = useAuth();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const unreadCount = notifications.filter(n => !n.read).length;
 
   // Cerrar modal automáticamente cuando el usuario se autentique
@@ -71,13 +73,9 @@ export const Header: React.FC = () => {
                     </Button>
                   </DropdownTrigger>
                   <DropdownMenu aria-label="Perfil">
-                    <DropdownItem key="profile">
+                    <DropdownItem key="profile" onPress={() => setProfileOpen(true)}>
                       <Icon icon="lucide:user" className="mr-2" />
                       Mi perfil
-                    </DropdownItem>
-                    <DropdownItem key="settings" onPress={() => setSettingsOpen(true)}>
-                      <Icon icon="lucide:settings" className="mr-2" />
-                      Configuración
                     </DropdownItem>
                     <DropdownItem key="logout" color="danger" onPress={handleLogout}>
                       <Icon icon="lucide:log-out" className="mr-2" />
@@ -86,28 +84,15 @@ export const Header: React.FC = () => {
                   </DropdownMenu>
                 </Dropdown>
               ) : (
-                // Usuario no autenticado - mostrar botón de perfil
-                <Dropdown placement="bottom-end">
-                  <DropdownTrigger>
-                    <Button 
-                      variant="flat" 
-                      color="primary"
-                      startContent={<Icon icon="lucide:user" />}
-                    >
-                      Perfil
-                    </Button>
-                  </DropdownTrigger>
-                  <DropdownMenu aria-label="Opciones de perfil">
-                    <DropdownItem key="login" onPress={() => setAuthModalOpen(true)}>
-                      <Icon icon="lucide:log-in" className="mr-2" />
-                      Iniciar sesión
-                    </DropdownItem>
-                    <DropdownItem key="register" onPress={() => setAuthModalOpen(true)}>
-                      <Icon icon="lucide:user-plus" className="mr-2" />
-                      Registrarse
-                    </DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
+                // Usuario no autenticado - mostrar botón de perfil que abre directamente el modal
+                <Button 
+                  variant="flat" 
+                  color="primary"
+                  startContent={<Icon icon="lucide:user" />}
+                  onPress={() => setAuthModalOpen(true)}
+                >
+                  Perfil
+                </Button>
               )}
             </NavbarContent>
           </Navbar>
@@ -119,6 +104,15 @@ export const Header: React.FC = () => {
         <ModalContent className="max-w-md mx-auto">
           <ModalBody className="py-4 flex justify-center">
             <AuthContainer onAuthSuccess={handleAuthSuccess} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal de perfil */}
+      <Modal isOpen={profileOpen} onOpenChange={setProfileOpen} size="md" backdrop="blur" placement="center">
+        <ModalContent className="max-w-md mx-auto">
+          <ModalBody className="py-4 flex justify-center">
+            <Profile />
           </ModalBody>
         </ModalContent>
       </Modal>

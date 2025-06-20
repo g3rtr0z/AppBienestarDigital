@@ -7,7 +7,8 @@ import {
   onAuthStateChanged 
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { auth, db } from '../config/firebase';
+import { ref, set } from 'firebase/database';
+import { auth, db, realtimeDb } from '../config/firebase';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -88,34 +89,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       console.log('Usuario creado exitosamente en Authentication:', user.uid);
       
-      // Intentar guardar en Firestore solo si la creación en Auth fue exitosa
+      // Datos del usuario para guardar
+      const userData = {
+        name,
+        email,
+        createdAt: new Date().toISOString(),
+        settings: {
+          screenTimeLimit: 8,
+          waterGoal: 8,
+          breakInterval: 25,
+          breakDuration: 5,
+          notificationsEnabled: true,
+          soundEnabled: true,
+          accessibilityMode: false,
+          theme: "system",
+          screenTimeEnabled: true,
+          activeBreaksEnabled: true,
+          hydrationEnabled: true
+        }
+      };
+      
+      // Guardar en Firestore
       try {
-        const userData = {
-          name,
-          email,
-          createdAt: new Date(),
-          settings: {
-            screenTimeLimit: 8,
-            waterGoal: 8,
-            breakInterval: 25,
-            breakDuration: 5,
-            notificationsEnabled: true,
-            soundEnabled: true,
-            accessibilityMode: false,
-            theme: "system",
-            screenTimeEnabled: true,
-            activeBreaksEnabled: true,
-            hydrationEnabled: true
-          }
-        };
-        
-        console.log('Intentando guardar en Firestore:', userData);
+        console.log('Guardando en Firestore:', userData);
         await setDoc(doc(db, 'users', user.uid), userData);
         console.log('Datos guardados exitosamente en Firestore');
       } catch (firestoreError: any) {
         console.error('Error al guardar en Firestore:', firestoreError);
-        // No lanzar error aquí, el usuario ya se creó en Auth
-        console.warn('Usuario creado en Auth pero no se pudo guardar en Firestore');
+      }
+      
+      // Guardar en Realtime Database
+      try {
+        console.log('Guardando en Realtime Database:', userData);
+        const userRef = ref(realtimeDb, `users/${user.uid}`);
+        await set(userRef, {
+          name: userData.name,
+          email: userData.email,
+          createdAt: userData.createdAt
+        });
+        console.log('Datos guardados exitosamente en Realtime Database');
+      } catch (realtimeError: any) {
+        console.error('Error al guardar en Realtime Database:', realtimeError);
       }
       
     } catch (error: any) {

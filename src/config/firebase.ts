@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getDatabase } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAsUZ9uMcSdmNpEBiP-ZNVhy8dadwYUzJE",
@@ -9,7 +10,8 @@ const firebaseConfig = {
   storageBucket: "viveoffline.firebasestorage.app",
   messagingSenderId: "1077224555403",
   appId: "1:1077224555403:web:f5fad61684211b8200258e",
-  measurementId: "G-XFPZLFKGRX"
+  measurementId: "G-XFPZLFKGRX",
+  databaseURL: "https://viveoffline-default-rtdb.firebaseio.com"
 };
 
 console.log('=== CONFIGURACIÓN DE FIREBASE ===');
@@ -17,10 +19,12 @@ console.log('Configuración completa:', JSON.stringify(firebaseConfig, null, 2))
 console.log('API Key presente:', !!firebaseConfig.apiKey);
 console.log('Project ID presente:', !!firebaseConfig.projectId);
 console.log('App ID presente:', !!firebaseConfig.appId);
+console.log('Database URL presente:', !!firebaseConfig.databaseURL);
 
 let app: any;
 let auth: any;
 let db: any;
+let realtimeDb: any;
 
 try {
   // Initialize Firebase
@@ -35,10 +39,14 @@ try {
   db = getFirestore(app);
   console.log('✅ Firestore inicializado exitosamente');
   
+  // Initialize Realtime Database
+  realtimeDb = getDatabase(app);
+  console.log('✅ Realtime Database inicializado exitosamente');
+  
 } catch (error) {
   console.error('❌ Error al inicializar Firebase:', error);
   throw error;
 }
 
-export { auth, db };
+export { auth, db, realtimeDb };
 export default app; 
