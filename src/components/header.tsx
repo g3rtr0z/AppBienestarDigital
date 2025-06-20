@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navbar, NavbarBrand, NavbarContent, Button, Tooltip, Badge, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, User, Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { useNotifications } from "../context/notifications-context";
@@ -13,6 +13,14 @@ export const Header: React.FC = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const unreadCount = notifications.filter(n => !n.read).length;
 
+  // Cerrar modal automáticamente cuando el usuario se autentique
+  useEffect(() => {
+    if (currentUser && authModalOpen) {
+      console.log('Usuario autenticado detectado, cerrando modal...');
+      setAuthModalOpen(false);
+    }
+  }, [currentUser, authModalOpen]);
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -21,11 +29,17 @@ export const Header: React.FC = () => {
     }
   };
 
+  const handleAuthSuccess = () => {
+    console.log('handleAuthSuccess ejecutado, cerrando modal...');
+    setAuthModalOpen(false);
+    console.log('Modal cerrado');
+  };
+
   return (
     <>
-      <div className="border-b border-divider">
+      <div className="bg-white border-b border-divider">
         <div className="max-w-[1200px] mx-auto">
-          <Navbar maxWidth="xl" className="border-b-0">
+          <Navbar maxWidth="full" className="border-b-0">
             <NavbarBrand>
               <Icon icon="lucide:activity" className="text-primary text-2xl mr-2" />
               <p className="font-bold text-inherit">Bienestar Digital</p>
@@ -47,16 +61,14 @@ export const Header: React.FC = () => {
                 // Usuario autenticado - mostrar perfil
                 <Dropdown placement="bottom-end">
                   <DropdownTrigger>
-                    <User
-                      as="button"
-                      avatarProps={{
-                        isBordered: true,
-                        src: "https://i.pravatar.cc/150?u=a042581f4e29026024d"
-                      }}
-                      className="transition-transform cursor-pointer"
-                      description={currentUser.email}
-                      name={currentUser.displayName || currentUser.email?.split('@')[0]}
-                    />
+                    <Button 
+                      isIconOnly 
+                      variant="light" 
+                      aria-label="Perfil"
+                      className="w-10 h-10 rounded-full bg-primary text-white"
+                    >
+                      <Icon icon="lucide:activity" className="text-xl" />
+                    </Button>
                   </DropdownTrigger>
                   <DropdownMenu aria-label="Perfil">
                     <DropdownItem key="profile">
@@ -103,13 +115,10 @@ export const Header: React.FC = () => {
       </div>
 
       {/* Modal de autenticación */}
-      <Modal isOpen={authModalOpen} onOpenChange={setAuthModalOpen} size="lg" backdrop="blur">
-        <ModalContent>
-          <ModalHeader className="flex justify-between items-center">
-            Iniciar sesión / Registrarse
-          </ModalHeader>
-          <ModalBody className="max-h-[90vh] overflow-auto py-6">
-            <AuthContainer onAuthSuccess={() => setAuthModalOpen(false)} />
+      <Modal isOpen={authModalOpen} onOpenChange={setAuthModalOpen} size="md" backdrop="blur" placement="center">
+        <ModalContent className="max-w-md mx-auto">
+          <ModalBody className="py-4 flex justify-center">
+            <AuthContainer onAuthSuccess={handleAuthSuccess} />
           </ModalBody>
         </ModalContent>
       </Modal>

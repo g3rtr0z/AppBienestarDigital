@@ -14,7 +14,7 @@ const AppContent: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <main className="container mx-auto px-4 py-8 max-w-[1200px]">
+      <main className="max-w-[1200px] mx-auto px-4 py-8">
         <Dashboard />
       </main>
       <NotificationToasts />

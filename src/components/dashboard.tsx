@@ -22,13 +22,13 @@ export const Dashboard: React.FC = () => {
 
   const handleBreakNow = () => {
     if (notificationsEnabled) {
-      addNotification({
-        id: Date.now().toString(),
-        title: "¡Pausa activa iniciada!",
-        message: "Tómate 5 minutos para estirar y descansar la vista.",
-        type: "success",
-        read: false
-      });
+    addNotification({
+      id: Date.now().toString(),
+      title: "¡Pausa activa iniciada!",
+      message: "Tómate 5 minutos para estirar y descansar la vista.",
+      type: "success",
+      read: false
+    });
     }
   };
 
@@ -83,35 +83,35 @@ export const Dashboard: React.FC = () => {
       transition={{ duration: 0.5 }}
     >
       {screenTimeEnabled && (
-        <motion.div
-          className="lg:col-span-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <ScreenTimeCard />
-        </motion.div>
+      <motion.div
+        className="lg:col-span-2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
+        <ScreenTimeCard />
+      </motion.div>
       )}
 
       {hydrationEnabled && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          <HydrationReminder />
-        </motion.div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+      >
+        <HydrationReminder />
+      </motion.div>
       )}
 
       {activeBreaksEnabled && (
-        <motion.div
-          className="lg:col-span-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-        >
-          <ActiveBreaksCard onBreakNow={handleBreakNow} />
-        </motion.div>
+      <motion.div
+        className="lg:col-span-2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+      >
+        <ActiveBreaksCard onBreakNow={handleBreakNow} />
+      </motion.div>
       )}
 
       <motion.div
@@ -130,9 +130,9 @@ export const Dashboard: React.FC = () => {
           <CardBody>
             <div className="space-y-6">
               {screenTimeEnabled && (
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-small font-medium">Tiempo de pantalla</span>
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span className="text-small font-medium">Tiempo de pantalla</span>
                     <span className={`text-small text-${getScreenTimeStatus().color}`}>
                       {getScreenTimeStatus().text}
                     </span>
@@ -145,9 +145,9 @@ export const Dashboard: React.FC = () => {
               )}
 
               {activeBreaksEnabled && (
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-small font-medium">Pausas activas</span>
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span className="text-small font-medium">Pausas activas</span>
                     <span className={`text-small text-${getBreaksStatus().color}`}>
                       {getBreaksStatus().text}
                     </span>
@@ -160,9 +160,9 @@ export const Dashboard: React.FC = () => {
               )}
 
               {hydrationEnabled && (
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-small font-medium">Hidratación</span>
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span className="text-small font-medium">Hidratación</span>
                     <span className={`text-small text-${getHydrationStatus().color}`}>
                       {getHydrationStatus().text}
                     </span>
@@ -178,7 +178,7 @@ export const Dashboard: React.FC = () => {
                 <div className="text-center py-8">
                   <Icon icon="lucide:settings" className="text-default-400 text-4xl mx-auto mb-4" />
                   <p className="text-default-500">Activa las funcionalidades en Configuración para ver tu estado de bienestar</p>
-                </div>
+              </div>
               )}
             </div>
           </CardBody>

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Card, CardBody, CardHeader, Input, Button, Link } from '@heroui/react';
-import { Icon } from '@iconify/react';
-import { motion } from 'framer-motion';
+import { Card, CardHeader, CardBody, Input, Button, Link } from "@heroui/react";
+import { Icon } from "@iconify/react";
 import { useAuth } from '../../context/auth-context';
 
 interface LoginProps {
@@ -10,11 +9,11 @@ interface LoginProps {
 }
 
 export const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onAuthSuccess }) => {
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { login } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +28,9 @@ export const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onAuthSuccess 
       setLoading(true);
       await login(email, password);
       if (onAuthSuccess) {
-        onAuthSuccess();
+        setTimeout(() => {
+          onAuthSuccess();
+        }, 100);
       }
     } catch (error: any) {
       console.error('Error completo:', error);
@@ -52,78 +53,69 @@ export const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onAuthSuccess 
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="w-full min-h-[400px]"
-    >
-      <Card className="w-full shadow-none border-0 h-full">
-        <CardHeader className="flex flex-col items-center gap-3 pb-6">
-          <div className="flex items-center gap-2">
-            <Icon icon="lucide:activity" className="text-primary text-2xl" />
-            <h1 className="text-xl font-bold text-foreground">Bienestar Digital</h1>
-          </div>
-          <p className="text-default-500 text-center text-sm">Inicia sesión en tu cuenta</p>
-        </CardHeader>
-        
-        <CardBody className="space-y-6 px-0 flex-1">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              type="email"
-              label="Correo electrónico"
-              placeholder="tu@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              isRequired
-              size="sm"
-              startContent={<Icon icon="lucide:mail" className="text-default-400 text-sm" />}
-            />
-            
-            <Input
-              type="password"
-              label="Contraseña"
-              placeholder="Ingresa tu contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              isRequired
-              size="sm"
-              startContent={<Icon icon="lucide:lock" className="text-default-400 text-sm" />}
-            />
+    <div className="w-full flex justify-center">
+      <div className="w-full max-w-sm">
+        <Card className="shadow-none border-0">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-center mb-3">
+              <Icon icon="lucide:user" className="text-primary text-2xl mr-2" />
+              <h1 className="text-xl font-bold">Iniciar Sesión</h1>
+            </div>
+          </CardHeader>
+          <CardBody className="pt-0">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <Input
+                type="email"
+                label="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                startContent={<Icon icon="lucide:mail" className="text-gray-400" />}
+                size="md"
+                variant="bordered"
+                isRequired
+              />
+              <Input
+                type="password"
+                label="Contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                startContent={<Icon icon="lucide:lock" className="text-gray-400" />}
+                size="md"
+                variant="bordered"
+                isRequired
+              />
+              
+              {error && (
+                <div className="text-red-500 text-xs bg-red-50 p-3 rounded">
+                  {error}
+                </div>
+              )}
 
-            {error && (
-              <div className="text-danger text-xs bg-danger-50 p-3 rounded-lg">
-                {error}
-              </div>
-            )}
-
-            <Button
-              type="submit"
-              color="primary"
-              className="w-full"
-              size="sm"
-              isLoading={loading}
-              disabled={loading}
-            >
-              {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
-            </Button>
-          </form>
-
-          <div className="text-center pt-4">
-            <p className="text-default-500 text-xs">
-              ¿No tienes una cuenta?{' '}
-              <Link
-                color="primary"
-                href="#"
-                onPress={() => onSwitchToRegister()}
-                className="font-medium text-xs"
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                size="md"
               >
-                Regístrate aquí
-              </Link>
-            </p>
-          </div>
-        </CardBody>
-      </Card>
-    </motion.div>
+                {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-600">
+                ¿No tienes cuenta?{' '}
+                <Link 
+                  href="#" 
+                  onPress={onSwitchToRegister}
+                  className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                >
+                  Regístrate aquí
+                </Link>
+              </p>
+            </div>
+          </CardBody>
+        </Card>
+      </div>
+    </div>
   );
 }; 
