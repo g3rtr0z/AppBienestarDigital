@@ -16,6 +16,25 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [emailError, setEmailError] = useState('');
+
+  // Función para validar dominios de correo permitidos
+  const validateEmailDomain = (email: string): boolean => {
+    const allowedDomains = ['@alumnos.santotomas.cl', '@santotomas.cl'];
+    return allowedDomains.some(domain => email.toLowerCase().endsWith(domain));
+  };
+
+  // Función para validar email en tiempo real
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const emailValue = e.target.value;
+    setEmail(emailValue);
+    
+    if (emailValue && !validateEmailDomain(emailValue)) {
+      setEmailError('Solo se permiten correos con dominios @alumnos.santotomas.cl o @santotomas.cl');
+    } else {
+      setEmailError('');
+    }
+  };
 
   // Función para probar la conexión con Firebase
   const testFirebaseConnection = async () => {
@@ -52,6 +71,12 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
 
     if (name.trim().length < 2) {
       setError('El nombre completo debe tener al menos 2 caracteres');
+      return;
+    }
+
+    // Validar dominio de correo
+    if (!validateEmailDomain(email)) {
+      setError('Solo se permiten correos con dominios @alumnos.santotomas.cl o @santotomas.cl');
       return;
     }
 
@@ -125,12 +150,18 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
                 type="email"
                 label="Email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleEmailChange}
                 startContent={<Icon icon="lucide:mail" className="text-gray-400" />}
                 size="md"
                 variant="bordered"
                 isRequired
+                isInvalid={!!emailError}
+                errorMessage={emailError}
+                placeholder="usuario@alumnos.santotomas.cl"
               />
+              <p className="text-xs text-gray-500 -mt-2">
+                Solo se permiten correos institucionales de Santo Tomás (@alumnos.santotomas.cl o @santotomas.cl)
+              </p>
               <Input
                 type="password"
                 label="Contraseña"

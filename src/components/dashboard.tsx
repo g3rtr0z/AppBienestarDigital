@@ -11,7 +11,7 @@ import { useAppState } from "../context/app-state-context";
 import { motion } from "framer-motion";
 
 export const Dashboard: React.FC = () => {
-  const { screenTimeLimit, screenTimeEnabled, activeBreaksEnabled, hydrationEnabled, notificationsEnabled } = useSettings();
+  const { screenTimeLimit, screenTimeEnabled, activeBreaksEnabled, hydrationEnabled, notificationsEnabled, waterGoal } = useSettings();
   const { addNotification } = useNotifications();
   const { 
     currentScreenTime, 
@@ -48,7 +48,7 @@ export const Dashboard: React.FC = () => {
   };
 
   const getHydrationProgress = () => {
-    const progress = Math.min((waterIntake / 8) * 100, 100); // Meta por defecto de 8 vasos
+    const progress = Math.min((waterIntake / waterGoal) * 100, 100); // Usar waterGoal del contexto
     return Math.round(progress);
   };
 
@@ -169,7 +169,7 @@ export const Dashboard: React.FC = () => {
                   </div>
                   <Progress value={getHydrationProgress()} color={getHydrationStatus().color} className="h-2" />
                   <p className="text-xs text-default-500 mt-1">
-                    {waterIntake} de 8 vasos consumidos
+                    {waterIntake} de {waterGoal} vasos consumidos
                   </p>
                 </div>
               )}
