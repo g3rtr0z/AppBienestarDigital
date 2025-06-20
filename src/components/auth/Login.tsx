@@ -74,6 +74,10 @@ export const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onAuthSuccess 
                 size="md"
                 variant="bordered"
                 isRequired
+                classNames={{
+                  input: "w-full",
+                  inputWrapper: "w-full input-fixed"
+                }}
               />
               <Input
                 type="password"
@@ -84,6 +88,10 @@ export const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onAuthSuccess 
                 size="md"
                 variant="bordered"
                 isRequired
+                classNames={{
+                  input: "w-full",
+                  inputWrapper: "w-full input-fixed"
+                }}
               />
               
               {error && (

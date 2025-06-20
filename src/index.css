@@ -12,3 +12,29 @@ body {
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
 }
+
+/* Estilos para mantener inputs con tamaño fijo */
+.input-fixed {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+}
+
+.input-fixed:focus {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+}
+
+/* Prevenir expansión de inputs de HeroUI */
+[data-slot="input-wrapper"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+}
+
+[data-slot="input-wrapper"]:focus-within {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+}

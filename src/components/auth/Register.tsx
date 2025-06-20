@@ -145,6 +145,10 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
                 size="md"
                 variant="bordered"
                 isRequired
+                classNames={{
+                  input: "w-full",
+                  inputWrapper: "w-full input-fixed"
+                }}
               />
               <Input
                 type="email"
@@ -158,6 +162,10 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
                 isInvalid={!!emailError}
                 errorMessage={emailError}
                 placeholder="usuario@alumnos.santotomas.cl"
+                classNames={{
+                  input: "w-full",
+                  inputWrapper: "w-full input-fixed"
+                }}
               />
               <p className="text-xs text-gray-500 -mt-2">
                 Solo se permiten correos institucionales de Santo Tomás (@alumnos.santotomas.cl o @santotomas.cl)
@@ -171,6 +179,10 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
                 size="md"
                 variant="bordered"
                 isRequired
+                classNames={{
+                  input: "w-full",
+                  inputWrapper: "w-full input-fixed"
+                }}
               />
               <Input
                 type="password"
@@ -181,6 +193,10 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
                 size="md"
                 variant="bordered"
                 isRequired
+                classNames={{
+                  input: "w-full",
+                  inputWrapper: "w-full input-fixed"
+                }}
               />
               
               {error && (
@@ -201,7 +217,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
             </form>
 
             <div className="mt-4 text-center">
-              <p className="text-xs text-gray-600">
+              <p className="text-sm text-gray-600">
                 ¿Ya tienes cuenta?{' '}
                 <Link 
                   href="#" 
