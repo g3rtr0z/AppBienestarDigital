@@ -100,7 +100,7 @@ export const ScreenTimeCard: React.FC = () => {
                   strokeWidth="8"
                   strokeDasharray={58 * 2 * Math.PI}
                   strokeDashoffset={
-                    58 * 2 * Math.PI * (1 - currentScreenTime / screenTimeLimit)
+                    58 * 2 * Math.PI * (1 - currentScreenTime / (screenTimeLimit * 60))
                   }
                   strokeLinecap="round"
                   stroke="currentColor"

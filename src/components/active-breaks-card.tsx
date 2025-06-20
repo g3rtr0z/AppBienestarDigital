@@ -17,7 +17,7 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
     breakTime, setBreakTime, 
     isTimerStarted, setIsTimerStarted 
   } = useAppState();
-  const { breakInterval, breakDuration } = useSettings();
+  const { breakInterval, breakDuration, notificationsEnabled } = useSettings();
 
   React.useEffect(() => {
     if (!isTimerStarted) return;
@@ -49,7 +49,9 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
   const handleStartBreak = () => {
     setIsBreakActive(true);
     setBreaksTaken((prev) => prev + 1);
-    onBreakNow();
+    if (notificationsEnabled) {
+      onBreakNow();
+    }
   };
 
   const formatTime = (seconds: number): string => {

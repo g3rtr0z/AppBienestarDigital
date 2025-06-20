@@ -6,21 +6,73 @@ import { useSettings } from "../context/settings-context";
 import { HydrationReminder } from "./hydration-reminder";
 import { ActiveBreaksCard } from "./active-breaks-card";
 import { useNotifications } from "../context/notifications-context";
+import { useAppState } from "../context/app-state-context";
 
 import { motion } from "framer-motion";
 
 export const Dashboard: React.FC = () => {
-  const { screenTimeLimit } = useSettings();
+  const { screenTimeLimit, screenTimeEnabled, activeBreaksEnabled, hydrationEnabled, notificationsEnabled } = useSettings();
   const { addNotification } = useNotifications();
+  const { 
+    currentScreenTime, 
+    waterIntake, 
+    breaksTaken, 
+    isTimerStarted 
+  } = useAppState();
 
   const handleBreakNow = () => {
-    addNotification({
-      id: Date.now().toString(),
-      title: "¡Pausa activa iniciada!",
-      message: "Tómate 5 minutos para estirar y descansar la vista.",
-      type: "success",
-      read: false
-    });
+    if (notificationsEnabled) {
+      addNotification({
+        id: Date.now().toString(),
+        title: "¡Pausa activa iniciada!",
+        message: "Tómate 5 minutos para estirar y descansar la vista.",
+        type: "success",
+        read: false
+      });
+    }
+  };
+
+  // Calcular porcentajes reales
+  const getScreenTimeProgress = () => {
+    const limitInMinutes = screenTimeLimit * 60;
+    const progress = Math.min((currentScreenTime / limitInMinutes) * 100, 100);
+    return Math.round(progress);
+  };
+
+  const getScreenTimeStatus = () => {
+    const progress = getScreenTimeProgress();
+    if (progress < 50) return { text: "Óptimo", color: "success" as const };
+    if (progress < 80) return { text: "Bueno", color: "primary" as const };
+    if (progress < 95) return { text: "Atención", color: "warning" as const };
+    return { text: "Crítico", color: "danger" as const };
+  };
+
+  const getHydrationProgress = () => {
+    const progress = Math.min((waterIntake / 8) * 100, 100); // Meta por defecto de 8 vasos
+    return Math.round(progress);
+  };
+
+  const getHydrationStatus = () => {
+    const progress = getHydrationProgress();
+    if (progress >= 100) return { text: "Completado", color: "success" as const };
+    if (progress >= 75) return { text: "Bueno", color: "primary" as const };
+    if (progress >= 50) return { text: "Regular", color: "warning" as const };
+    return { text: "Bajo", color: "danger" as const };
+  };
+
+  const getBreaksProgress = () => {
+    // Considerar que 6 pausas al día es óptimo (cada 2-3 horas)
+    const optimalBreaks = 6;
+    const progress = Math.min((breaksTaken / optimalBreaks) * 100, 100);
+    return Math.round(progress);
+  };
+
+  const getBreaksStatus = () => {
+    const progress = getBreaksProgress();
+    if (progress >= 100) return { text: "Excelente", color: "success" as const };
+    if (progress >= 75) return { text: "Bueno", color: "primary" as const };
+    if (progress >= 50) return { text: "Regular", color: "warning" as const };
+    return { text: "Bajo", color: "danger" as const };
   };
 
   return (
@@ -30,31 +82,37 @@ export const Dashboard: React.FC = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <motion.div
-        className="lg:col-span-2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
-        <ScreenTimeCard />
-      </motion.div>
+      {screenTimeEnabled && (
+        <motion.div
+          className="lg:col-span-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          <ScreenTimeCard />
+        </motion.div>
+      )}
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-      >
-        <HydrationReminder />
-      </motion.div>
+      {hydrationEnabled && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          <HydrationReminder />
+        </motion.div>
+      )}
 
-      <motion.div
-        className="lg:col-span-2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-      >
-        <ActiveBreaksCard onBreakNow={handleBreakNow} />
-      </motion.div>
+      {activeBreaksEnabled && (
+        <motion.div
+          className="lg:col-span-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <ActiveBreaksCard onBreakNow={handleBreakNow} />
+        </motion.div>
+      )}
 
       <motion.div
         initial={{ opacity: 0 }}
@@ -71,29 +129,57 @@ export const Dashboard: React.FC = () => {
           </CardHeader>
           <CardBody>
             <div className="space-y-6">
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span className="text-small font-medium">Tiempo de pantalla</span>
-                  <span className="text-small text-success">Óptimo</span>
+              {screenTimeEnabled && (
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-small font-medium">Tiempo de pantalla</span>
+                    <span className={`text-small text-${getScreenTimeStatus().color}`}>
+                      {getScreenTimeStatus().text}
+                    </span>
+                  </div>
+                  <Progress value={getScreenTimeProgress()} color={getScreenTimeStatus().color} className="h-2" />
+                  <p className="text-xs text-default-500 mt-1">
+                    {Math.floor(currentScreenTime / 60)}h {currentScreenTime % 60}m de {screenTimeLimit}h límite
+                  </p>
                 </div>
-                <Progress value={65} color="success" className="h-2" />
-              </div>
+              )}
 
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span className="text-small font-medium">Pausas activas</span>
-                  <span className="text-small text-warning">Regular</span>
+              {activeBreaksEnabled && (
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-small font-medium">Pausas activas</span>
+                    <span className={`text-small text-${getBreaksStatus().color}`}>
+                      {getBreaksStatus().text}
+                    </span>
+                  </div>
+                  <Progress value={getBreaksProgress()} color={getBreaksStatus().color} className="h-2" />
+                  <p className="text-xs text-default-500 mt-1">
+                    {breaksTaken} pausas realizadas hoy
+                  </p>
                 </div>
-                <Progress value={45} color="warning" className="h-2" />
-              </div>
+              )}
 
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span className="text-small font-medium">Hidratación</span>
-                  <span className="text-small text-primary">Bueno</span>
+              {hydrationEnabled && (
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-small font-medium">Hidratación</span>
+                    <span className={`text-small text-${getHydrationStatus().color}`}>
+                      {getHydrationStatus().text}
+                    </span>
+                  </div>
+                  <Progress value={getHydrationProgress()} color={getHydrationStatus().color} className="h-2" />
+                  <p className="text-xs text-default-500 mt-1">
+                    {waterIntake} de 8 vasos consumidos
+                  </p>
                 </div>
-                <Progress value={75} color="primary" className="h-2" />
-              </div>
+              )}
+
+              {!screenTimeEnabled && !activeBreaksEnabled && !hydrationEnabled && (
+                <div className="text-center py-8">
+                  <Icon icon="lucide:settings" className="text-default-400 text-4xl mx-auto mb-4" />
+                  <p className="text-default-500">Activa las funcionalidades en Configuración para ver tu estado de bienestar</p>
+                </div>
+              )}
             </div>
           </CardBody>
           <CardFooter>

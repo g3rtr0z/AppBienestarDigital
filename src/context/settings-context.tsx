@@ -17,6 +17,12 @@ interface SettingsContextType {
   setAccessibilityMode: (value: boolean) => void;
   theme: string;
   setTheme: (value: string) => void;
+  screenTimeEnabled: boolean;
+  setScreenTimeEnabled: (value: boolean) => void;
+  activeBreaksEnabled: boolean;
+  setActiveBreaksEnabled: (value: boolean) => void;
+  hydrationEnabled: boolean;
+  setHydrationEnabled: (value: boolean) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -30,6 +36,9 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [accessibilityMode, setAccessibilityMode] = useState<boolean>(false);
   const [theme, setTheme] = useState<string>("system");
+  const [screenTimeEnabled, setScreenTimeEnabled] = useState<boolean>(true);
+  const [activeBreaksEnabled, setActiveBreaksEnabled] = useState<boolean>(true);
+  const [hydrationEnabled, setHydrationEnabled] = useState<boolean>(true);
 
   useEffect(() => {
     const saved = localStorage.getItem("userSettings");
@@ -77,7 +86,13 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       accessibilityMode,
       setAccessibilityMode,
       theme,
-      setTheme
+      setTheme,
+      screenTimeEnabled,
+      setScreenTimeEnabled,
+      activeBreaksEnabled,
+      setActiveBreaksEnabled,
+      hydrationEnabled,
+      setHydrationEnabled
     }}>
       {children}
     </SettingsContext.Provider>

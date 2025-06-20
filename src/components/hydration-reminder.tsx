@@ -9,7 +9,14 @@ import { motion } from "framer-motion";
 export const HydrationReminder: React.FC = () => {
   const { waterIntake, setWaterIntake, nextReminder, setNextReminder, mostrarRecordatorio, setMostrarRecordatorio } = useAppState();
   const { addNotification } = useNotifications();
-  const { waterGoal } = useSettings();
+  const { waterGoal, notificationsEnabled } = useSettings();
+
+  // Iniciar el recordatorio automáticamente al cargar el componente
+  React.useEffect(() => {
+    if (nextReminder === null) {
+      setNextReminder(45 * 60); // iniciar contador 45 minutos
+    }
+  }, [setNextReminder]);
 
   React.useEffect(() => {
     if (nextReminder === null) return; // si no hay contador activo, no hacer nada
@@ -23,7 +30,7 @@ export const HydrationReminder: React.FC = () => {
         if (prev === null) return null; // por si cambia a null durante ejecución
 
         if (prev <= 1) {
-          if (!hasNotified) {
+          if (!hasNotified && notificationsEnabled) {
             setMostrarRecordatorio(true);
             addNotification({
               id: Date.now().toString(),
@@ -43,7 +50,7 @@ export const HydrationReminder: React.FC = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [nextReminder, addNotification, setNextReminder, setMostrarRecordatorio]);
+  }, [nextReminder, addNotification, setNextReminder, setMostrarRecordatorio, notificationsEnabled]);
 
   const handleAddWater = () => {
     if (waterIntake < waterGoal) {
@@ -54,13 +61,15 @@ export const HydrationReminder: React.FC = () => {
         setNextReminder(45 * 60); // iniciar contador 45 minutos
       }
 
-      addNotification({
-        id: Date.now().toString(),
-        title: "¡Bien hecho!",
-        message: "Has registrado un vaso de agua más.",
-        type: "success",
-        read: false,
-      });
+      if (notificationsEnabled) {
+        addNotification({
+          id: Date.now().toString(),
+          title: "¡Bien hecho!",
+          message: "Has registrado un vaso de agua más.",
+          type: "success",
+          read: false,
+        });
+      }
     }
   };
 

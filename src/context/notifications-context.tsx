@@ -27,13 +27,6 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       type: "info",
       read: false
     },
-    {
-      id: "2",
-      title: "Recordatorio de hidratación",
-      message: "Es hora de tomar un vaso de agua.",
-      type: "info",
-      read: false
-    }
   ]);
 
   const addNotification = (notification: Notification) => {

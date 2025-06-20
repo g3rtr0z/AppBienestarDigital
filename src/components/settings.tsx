@@ -14,7 +14,10 @@ export const Settings: React.FC = () => {
     notificationsEnabled, setNotificationsEnabled,
     soundEnabled, setSoundEnabled,
     accessibilityMode, setAccessibilityMode,
-    theme, setTheme
+    theme, setTheme,
+    screenTimeEnabled, setScreenTimeEnabled,
+    activeBreaksEnabled, setActiveBreaksEnabled,
+    hydrationEnabled, setHydrationEnabled
   } = useSettings();
 
   const handleRestoreDefaults = () => {
@@ -26,6 +29,9 @@ export const Settings: React.FC = () => {
     setSoundEnabled(true);
     setAccessibilityMode(false);
     setTheme("system");
+    setScreenTimeEnabled(true);
+    setActiveBreaksEnabled(true);
+    setHydrationEnabled(true);
 
     // Guardar los valores por defecto en localStorage
     const defaultSettings = {
@@ -36,7 +42,10 @@ export const Settings: React.FC = () => {
       notificationsEnabled: true,
       soundEnabled: true,
       accessibilityMode: false,
-      theme: "system"
+      theme: "system",
+      screenTimeEnabled: true,
+      activeBreaksEnabled: true,
+      hydrationEnabled: true
     };
 
     localStorage.setItem("userSettings", JSON.stringify(defaultSettings));
@@ -91,18 +100,23 @@ export const Settings: React.FC = () => {
           </div>
         </CardHeader>
         <CardBody className="space-y-6">
-          <div>
-            <p className="text-small font-medium mb-2">Límite diario: {screenTimeLimit} horas</p>
-            <Slider
-              aria-label="Límite de tiempo de pantalla"
-              step={0.5}
-              minValue={1}
-              maxValue={12}
-              value={screenTimeLimit}
-              onChange={value => setScreenTimeLimit(Array.isArray(value) ? value[0] : value)}
-              className="max-w-md"
-            />
-          </div>
+          
+          {screenTimeEnabled && (
+            <>
+              <div>
+                <p className="text-small font-medium mb-2">Límite diario: {screenTimeLimit} horas</p>
+                <Slider
+                  aria-label="Límite de tiempo de pantalla"
+                  step={0.5}
+                  minValue={1}
+                  maxValue={12}
+                  value={screenTimeLimit}
+                  onChange={value => setScreenTimeLimit(Array.isArray(value) ? value[0] : value)}
+                  className="max-w-md"
+                />
+              </div>
+            </>
+          )}
         </CardBody>
       </Card>
 
@@ -115,31 +129,38 @@ export const Settings: React.FC = () => {
           </div>
         </CardHeader>
         <CardBody className="space-y-6">
-          <div>
-            <p className="text-small font-medium mb-2">Intervalo de trabajo: {breakInterval} minutos</p>
-            <Slider
-              aria-label="Intervalo de trabajo"
-              step={5}
-              minValue={15}
-              maxValue={60}
-              value={breakInterval}
-              onChange={value => setBreakInterval(Array.isArray(value) ? value[0] : value)}
-              className="max-w-md"
-            />
-          </div>
 
-          <div>
-            <p className="text-small font-medium mb-2">Duración de la pausa: {breakDuration} minutos</p>
-            <Slider
-              aria-label="Duración de la pausa"
-              step={1}
-              minValue={1}
-              maxValue={15}
-              value={breakDuration}
-              onChange={value => setBreakDuration(Array.isArray(value) ? value[0] : value)}
-              className="max-w-md"
-            />
-          </div>
+          
+          {activeBreaksEnabled && (
+            <>
+              <div>
+                <p className="text-small font-medium mb-2">Intervalo de trabajo: {breakInterval} minutos</p>
+                <Slider
+                  aria-label="Intervalo de trabajo"
+                  step={5}
+                  minValue={15}
+                  maxValue={60}
+                  value={breakInterval}
+                  onChange={value => setBreakInterval(Array.isArray(value) ? value[0] : value)}
+                  className="max-w-md"
+                />
+              </div>
+
+              <div>
+                <p className="text-small font-medium mb-2">Duración de la pausa: {breakDuration} minutos</p>
+                <Slider
+                  aria-label="Duración de la pausa"
+                  step={1}
+                  minValue={1}
+                  maxValue={15}
+                  value={breakDuration}
+                  onChange={value => setBreakDuration(Array.isArray(value) ? value[0] : value)}
+                  className="max-w-md"
+                />
+              </div>
+
+            </>
+          )}
         </CardBody>
       </Card>
 
@@ -152,34 +173,38 @@ export const Settings: React.FC = () => {
           </div>
         </CardHeader>
         <CardBody className="space-y-6">
-          <div>
-            <p className="text-small font-medium mb-2">Meta diaria: {waterGoal} vasos</p>
-            <Slider
-              aria-label="Meta diaria de agua"
-              step={1}
-              minValue={4}
-              maxValue={12}
-              value={waterGoal}
-              onChange={value => setWaterGoal(Array.isArray(value) ? value[0] : value)}
-              className="max-w-md"
-            />
-          </div>
+          
+          {hydrationEnabled && (
+            <>
+              <div>
+                <p className="text-small font-medium mb-2">Meta diaria: {waterGoal} vasos</p>
+                <Slider
+                  aria-label="Meta diaria de agua"
+                  step={1}
+                  minValue={4}
+                  maxValue={12}
+                  value={waterGoal}
+                  onChange={value => setWaterGoal(Array.isArray(value) ? value[0] : value)}
+                  className="max-w-md"
+                />
+              </div>
 
-          <div className="flex flex-col gap-4">
-
-            <div className="max-w-xs">
-              <p className="text-small font-medium mb-2">Intervalo de recordatorio</p>
-              <Select
-                label="Intervalo"
-                defaultSelectedKeys={["45"]}
-              >
-                <SelectItem key="30">Cada 30 minutos</SelectItem>
-                <SelectItem key="45">Cada 45 minutos</SelectItem>
-                <SelectItem key="60">Cada 1 hora</SelectItem>
-                <SelectItem key="90">Cada 1.5 horas</SelectItem>
-              </Select>
-            </div>
-          </div>
+              <div className="flex flex-col gap-4">
+                <div className="max-w-xs">
+                  <p className="text-small font-medium mb-2">Intervalo de recordatorio</p>
+                  <Select
+                    label="Intervalo"
+                    defaultSelectedKeys={["45"]}
+                  >
+                    <SelectItem key="30">Cada 30 minutos</SelectItem>
+                    <SelectItem key="45">Cada 45 minutos</SelectItem>
+                    <SelectItem key="60">Cada 1 hora</SelectItem>
+                    <SelectItem key="90">Cada 1.5 horas</SelectItem>
+                  </Select>
+                </div>
+              </div>
+            </>
+          )}
         </CardBody>
       </Card>
 
