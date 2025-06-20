@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Permitir acceso a documentos de usuario solo si el usuario está autenticado
+    // y el documento pertenece al usuario actual
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Permitir acceso a documentos de prueba para debugging
+    match /test/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Denegar acceso a todos los demás documentos
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+} 

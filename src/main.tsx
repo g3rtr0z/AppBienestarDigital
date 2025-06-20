@@ -16,7 +16,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 						<main className="text-foreground bg-background">
 							<App />
 						</main>
-
 					</BrowserRouter>
 				</AppStateProvider>
 			</SettingsProvider>
