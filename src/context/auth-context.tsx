@@ -6,9 +6,8 @@ import {
   signOut, 
   onAuthStateChanged 
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { ref, set } from 'firebase/database';
-import { auth, db, realtimeDb } from '../config/firebase';
+import { auth, realtimeDb } from '../config/firebase';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -34,15 +33,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const testFirestoreConnection = async () => {
+  const testFirestoreConnection = async (): Promise<boolean> => {
     try {
-      console.log('Probando conexión con Firestore...');
-      const testDoc = doc(db, 'test', 'connection-test');
-      await setDoc(testDoc, { test: true, timestamp: new Date() });
-      console.log('Firestore está funcionando correctamente');
+      console.log('Probando conexión con Realtime Database...');
+      const testRef = ref(realtimeDb, 'test');
+      await set(testRef, { test: true });
+      console.log('✅ Conexión con Realtime Database exitosa');
       return true;
-    } catch (error: any) {
-      console.error('Error en Firestore:', error);
+    } catch (error) {
+      console.error('❌ Error de conexión con Realtime Database:', error);
       return false;
     }
   };
@@ -80,65 +79,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const register = async (email: string, password: string, name: string) => {
+  const register = async (email: string, password: string, name: string): Promise<void> => {
     try {
-      console.log('Intentando registrar usuario:', { email, name });
+      console.log('Iniciando registro con email:', email, 'y nombre:', name);
       
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       
-      console.log('Usuario creado exitosamente en Authentication:', user.uid);
+      console.log('Usuario creado exitosamente:', user.uid);
       
-      // Datos del usuario para guardar
+      // Preparar datos del usuario
       const userData = {
-        name,
-        email,
-        createdAt: new Date().toISOString(),
-        settings: {
-          screenTimeLimit: 8,
-          waterGoal: 8,
-          breakInterval: 25,
-          breakDuration: 5,
-          notificationsEnabled: true,
-          soundEnabled: true,
-          accessibilityMode: false,
-          theme: "system",
-          screenTimeEnabled: true,
-          activeBreaksEnabled: true,
-          hydrationEnabled: true
-        }
+        name: name.trim(),
+        email: email,
+        createdAt: new Date().toISOString()
       };
       
-      // Guardar en Firestore
-      try {
-        console.log('Guardando en Firestore:', userData);
-        await setDoc(doc(db, 'users', user.uid), userData);
-        console.log('Datos guardados exitosamente en Firestore');
-      } catch (firestoreError: any) {
-        console.error('Error al guardar en Firestore:', firestoreError);
-      }
+      console.log('Datos del usuario a guardar:', userData);
       
       // Guardar en Realtime Database
       try {
-        console.log('Guardando en Realtime Database:', userData);
         const userRef = ref(realtimeDb, `users/${user.uid}`);
-        await set(userRef, {
-          name: userData.name,
-          email: userData.email,
-          createdAt: userData.createdAt
-        });
+        await set(userRef, userData);
         console.log('Datos guardados exitosamente en Realtime Database');
+        console.log('Nombre guardado:', userData.name);
       } catch (realtimeError: any) {
         console.error('Error al guardar en Realtime Database:', realtimeError);
+        throw new Error(`Error al guardar datos del usuario: ${realtimeError.message}`);
       }
       
+      console.log('Registro completado exitosamente');
     } catch (error: any) {
-      console.error('Error en register:', error);
-      console.error('Código de error:', error.code);
-      console.error('Mensaje de error:', error.message);
-      
-      // Re-lanzar el error con información más detallada
-      throw new Error(error.message || 'Error desconocido al crear la cuenta');
+      console.error('Error en registro:', error);
+      throw error;
     }
   };
 

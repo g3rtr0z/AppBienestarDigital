@@ -27,11 +27,15 @@ export const Profile: React.FC = () => {
   const loadUserProfile = async () => {
     try {
       setLoading(true);
+      console.log('Cargando perfil para usuario:', currentUser?.uid);
+      
       const userRef = ref(realtimeDb, `users/${currentUser?.uid}`);
       const snapshot = await get(userRef);
       
       if (snapshot.exists()) {
         const userData = snapshot.val();
+        console.log('Datos encontrados en Realtime Database:', userData);
+        
         setProfile({
           name: userData.name || 'No especificado',
           email: userData.email || currentUser?.email || 'No especificado',
@@ -39,22 +43,18 @@ export const Profile: React.FC = () => {
         });
         setEditedName(userData.name || '');
       } else {
-        // Si no existe en Realtime Database, crear con datos básicos
-        const basicProfile = {
-          name: currentUser?.displayName || 'Usuario',
+        console.log('No se encontraron datos en Realtime Database');
+        setProfile({
+          name: 'No especificado',
           email: currentUser?.email || 'No especificado',
-          createdAt: new Date().toISOString()
-        };
-        setProfile(basicProfile);
-        setEditedName(basicProfile.name);
-        
-        // Guardar en Realtime Database
-        await set(userRef, basicProfile);
+          createdAt: 'No disponible'
+        });
+        setEditedName('');
       }
     } catch (error) {
       console.error('Error al cargar perfil:', error);
       setProfile({
-        name: currentUser?.displayName || 'Usuario',
+        name: 'No especificado',
         email: currentUser?.email || 'No especificado',
         createdAt: 'No disponible'
       });
@@ -99,7 +99,6 @@ export const Profile: React.FC = () => {
           <div className="flex items-center justify-center mb-3">
             <Icon icon="lucide:user" className="text-primary text-2xl mr-2" />
             <h1 className="text-xl font-bold">Mi Perfil</h1>
-            
           </div>
         </CardHeader>
         <CardBody className="pt-0">
@@ -164,15 +163,18 @@ export const Profile: React.FC = () => {
                   </Button>
                 </>
               ) : (
-                <Button
-                  variant="flat"
-                  color="primary"
-                  className="w-full"
-                  onPress={() => setEditing(true)}
-                  startContent={<Icon icon="lucide:edit" />}
-                >
-                  Editar Perfil
-                </Button>
+                <>
+                  <Button
+                    variant="flat"
+                    color="primary"
+                    className="flex-1"
+                    onPress={() => setEditing(true)}
+                    startContent={<Icon icon="lucide:edit" />}
+                  >
+                    Editar Perfil
+                  </Button>
+                 
+                </>
               )}
             </div>
           </div>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardHeader, CardBody, Input, Button, Link } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { useAuth } from '../../context/auth-context';
+import { set } from 'firebase/database';
 
 interface LoginProps {
   onSwitchToRegister: () => void;
@@ -45,7 +46,7 @@ export const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onAuthSuccess 
       } else if (error.message.includes('network')) {
         setError('Error de conexión. Verifica tu internet e intenta de nuevo.');
       } else {
-        setError(`Error al iniciar sesión: ${error.message}`);
+        setError(`Error al iniciar sesión, vuelve a intentarlo.`);
       }
     } finally {
       setLoading(false);

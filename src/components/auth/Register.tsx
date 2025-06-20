@@ -50,6 +50,11 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
       return;
     }
 
+    if (name.trim().length < 2) {
+      setError('El nombre completo debe tener al menos 2 caracteres');
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden');
       return;
@@ -63,8 +68,8 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
     try {
       setError('');
       setLoading(true);
-      console.log('Iniciando registro...');
-      await register(email, password, name);
+      console.log('Iniciando registro con nombre:', name.trim());
+      await register(email, password, name.trim());
       console.log('Registro exitoso, ejecutando onAuthSuccess...');
       if (onAuthSuccess) {
         setTimeout(() => {
