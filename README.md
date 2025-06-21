@@ -1,4 +1,6 @@
-# 🏥 Sistema de Bienestar Digital
+# 🏥 Vive Offline - Sistema de Bienestar Digital
+
+Link: https://app-bienestar-digital.vercel.app/
 
 Aplicación web para el seguimiento y mejora del bienestar digital de estudiantes de Santo Tomás.
 
@@ -35,9 +37,8 @@ AppBienestarDigital/
 
 ## 📄 Documentación
 
-- **Documentación completa**: Ver carpeta `PDF/`
-  - Archivo fuente: `PDF/DOCUMENTACION_SISTEMA_BIENESTAR_DIGITAL.md`
-  - PDF generado: `PDF/DOCUMENTACION_SISTEMA_BIENESTAR_DIGITAL.pdf`
+- **Manual de usuario** ver carpeta manual
+  - Archivo fuente: `manual/MANUAL_USUARIO_VIVEOFFLINE_SANTOTOMAS.pdf`
 
 ## 🎯 Instalación y uso
 
@@ -51,7 +52,3 @@ npm run dev
 # Construir para producción
 npm run build
 ```
-
-## 📝 Nota
-
-Este proyecto está optimizado y limpio, con todos los archivos no utilizados eliminados y la documentación organizada en la carpeta `PDF/`.
