@@ -137,10 +137,6 @@ const createPluginLogic = (babel: {types: typeof BabelTypes}, options: CustomPlu
           );
 
           openingElement.attributes.push(dataLocatorAttr);
-
-          console.log(
-            `[inject-data-locator-original-source] Added data-locator (${mapped ? "original" : "generated"}): ${locatorValue} to ${elementName} in ${filename}${mapped ? ` (gen L${start.line}:C${start.column})` : `(L${start.line}:C${start.column})`}`,
-          );
         }
       },
     },

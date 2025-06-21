@@ -49,7 +49,6 @@ export const Settings: React.FC = () => {
     };
 
     localStorage.setItem("userSettings", JSON.stringify(defaultSettings));
-    console.log("Valores predeterminados restaurados:", defaultSettings);
   };
 
   const handleSaveSettings = () => {
@@ -65,8 +64,6 @@ export const Settings: React.FC = () => {
     };
 
     localStorage.setItem("userSettings", JSON.stringify(settings));
-
-    console.log("Configuración guardada:", settings);
   };
 
   React.useEffect(() => {

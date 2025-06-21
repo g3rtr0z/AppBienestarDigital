@@ -39,8 +39,6 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
   // Función para probar la conexión con Firebase
   const testFirebaseConnection = async () => {
     try {
-      console.log('Probando conexión con Firebase...');
-      
       // Verificar configuración general
       const configResult = await testFirebaseConfiguration();
       if (!configResult.success) {
@@ -93,16 +91,11 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
     try {
       setError('');
       setLoading(true);
-      console.log('Iniciando registro con nombre:', name.trim());
       await register(email, password, name.trim());
-      console.log('Registro exitoso, ejecutando onAuthSuccess...');
       if (onAuthSuccess) {
         setTimeout(() => {
           onAuthSuccess();
-          console.log('onAuthSuccess ejecutado');
         }, 100);
-      } else {
-        console.log('onAuthSuccess no está definido');
       }
     } catch (error: any) {
       console.error('Error completo:', error);

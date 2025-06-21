@@ -14,13 +14,6 @@ const firebaseConfig = {
   databaseURL: "https://viveoffline-default-rtdb.firebaseio.com"
 };
 
-console.log('=== CONFIGURACIÓN DE FIREBASE ===');
-console.log('Configuración completa:', JSON.stringify(firebaseConfig, null, 2));
-console.log('API Key presente:', !!firebaseConfig.apiKey);
-console.log('Project ID presente:', !!firebaseConfig.projectId);
-console.log('App ID presente:', !!firebaseConfig.appId);
-console.log('Database URL presente:', !!firebaseConfig.databaseURL);
-
 let app: any;
 let auth: any;
 let db: any;
@@ -29,19 +22,15 @@ let realtimeDb: any;
 try {
   // Initialize Firebase
   app = initializeApp(firebaseConfig);
-  console.log('✅ Firebase app inicializada exitosamente:', app.name);
   
   // Initialize Firebase Authentication and get a reference to the service
   auth = getAuth(app);
-  console.log('✅ Firebase Auth inicializado exitosamente');
   
   // Initialize Cloud Firestore and get a reference to the service
   db = getFirestore(app);
-  console.log('✅ Firestore inicializado exitosamente');
   
   // Initialize Realtime Database
   realtimeDb = getDatabase(app);
-  console.log('✅ Realtime Database inicializado exitosamente');
   
 } catch (error) {
   console.error('❌ Error al inicializar Firebase:', error);

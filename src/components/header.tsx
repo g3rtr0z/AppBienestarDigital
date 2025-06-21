@@ -18,7 +18,6 @@ export const Header: React.FC = () => {
   // Cerrar modal automáticamente cuando el usuario se autentique
   useEffect(() => {
     if (currentUser && authModalOpen) {
-      console.log('Usuario autenticado detectado, cerrando modal...');
       setAuthModalOpen(false);
     }
   }, [currentUser, authModalOpen]);
@@ -32,9 +31,7 @@ export const Header: React.FC = () => {
   };
 
   const handleAuthSuccess = () => {
-    console.log('handleAuthSuccess ejecutado, cerrando modal...');
     setAuthModalOpen(false);
-    console.log('Modal cerrado');
   };
 
   return (

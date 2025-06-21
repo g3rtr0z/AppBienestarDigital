@@ -27,14 +27,12 @@ export const Profile: React.FC = () => {
   const loadUserProfile = async () => {
     try {
       setLoading(true);
-      console.log('Cargando perfil para usuario:', currentUser?.uid);
       
       const userRef = ref(realtimeDb, `users/${currentUser?.uid}`);
       const snapshot = await get(userRef);
       
       if (snapshot.exists()) {
         const userData = snapshot.val();
-        console.log('Datos encontrados en Realtime Database:', userData);
         
         setProfile({
           name: userData.name || 'No especificado',
@@ -43,7 +41,6 @@ export const Profile: React.FC = () => {
         });
         setEditedName(userData.name || '');
       } else {
-        console.log('No se encontraron datos en Realtime Database');
         setProfile({
           name: 'No especificado',
           email: currentUser?.email || 'No especificado',
