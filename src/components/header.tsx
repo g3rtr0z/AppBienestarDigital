@@ -6,6 +6,7 @@ import { useAuth } from "../context/auth-context";
 import { AuthContainer } from "./auth/AuthContainer";
 import { Settings } from "./settings";
 import { Profile } from "./Profile";
+import { APP_VERSION } from "../config/version";
 
 export const Header: React.FC = () => {
   const { notifications, markAllAsRead } = useNotifications();
@@ -41,7 +42,10 @@ export const Header: React.FC = () => {
           <Navbar maxWidth="full" className="border-b-0">
             <NavbarBrand>
               <Icon icon="lucide:activity" className="text-primary text-2xl mr-2" />
-              <p className="font-bold text-inherit">Bienestar Digital</p>
+              <div>
+                <p className="font-bold text-inherit">Bienestar Digital</p>
+                <p className="text-xs text-gray-500">v{APP_VERSION}</p>
+              </div>
             </NavbarBrand>
 
             <NavbarContent justify="end">
