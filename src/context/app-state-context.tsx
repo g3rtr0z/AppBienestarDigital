@@ -18,6 +18,8 @@ interface AppStateContextType {
   setNextReminder: React.Dispatch<React.SetStateAction<number | null>>;
   mostrarRecordatorio: boolean;
   setMostrarRecordatorio: React.Dispatch<React.SetStateAction<boolean>>;
+  elapsedHydrationSeconds: number;
+  setElapsedHydrationSeconds: React.Dispatch<React.SetStateAction<number>>;
 
   // Pausas activas
   nextBreak: number;
@@ -30,6 +32,8 @@ interface AppStateContextType {
   setBreakTime: React.Dispatch<React.SetStateAction<number>>;
   isTimerStarted: boolean;
   setIsTimerStarted: React.Dispatch<React.SetStateAction<boolean>>;
+  elapsedBreakSeconds: number;
+  setElapsedBreakSeconds: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const AppStateContext = createContext<AppStateContextType | undefined>(undefined);
@@ -45,6 +49,7 @@ export const AppStateProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [waterIntake, setWaterIntake] = useState(0);
   const [nextReminder, setNextReminder] = useState<number | null>(null);
   const [mostrarRecordatorio, setMostrarRecordatorio] = useState(false);
+  const [elapsedHydrationSeconds, setElapsedHydrationSeconds] = useState(0);
 
   // Pausas activas
   const [nextBreak, setNextBreak] = useState(25 * 60); // 25 minutos
@@ -52,6 +57,7 @@ export const AppStateProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [isBreakActive, setIsBreakActive] = useState(false);
   const [breakTime, setBreakTime] = useState(5 * 60); // 5 minutos
   const [isTimerStarted, setIsTimerStarted] = useState(false);
+  const [elapsedBreakSeconds, setElapsedBreakSeconds] = useState(0);
 
   // Registrar tiempo de pantalla por hora
   useEffect(() => {
@@ -180,7 +186,9 @@ export const AppStateProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       breaksTaken, setBreaksTaken,
       isBreakActive, setIsBreakActive,
       breakTime, setBreakTime,
-      isTimerStarted, setIsTimerStarted
+      isTimerStarted, setIsTimerStarted,
+      elapsedHydrationSeconds, setElapsedHydrationSeconds,
+      elapsedBreakSeconds, setElapsedBreakSeconds
     }}>
       {children}
     </AppStateContext.Provider>

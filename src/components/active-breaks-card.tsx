@@ -15,40 +15,62 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
     breaksTaken, setBreaksTaken, 
     isBreakActive, setIsBreakActive, 
     breakTime, setBreakTime, 
-    isTimerStarted, setIsTimerStarted 
+    isTimerStarted, setIsTimerStarted,
+    elapsedBreakSeconds, setElapsedBreakSeconds
   } = useAppState();
   const { breakInterval, breakDuration, notificationsEnabled } = useSettings();
+
+  // Calcular el tiempo restante basado en el tiempo transcurrido y la configuración
+  const remainingBreakSeconds = isBreakActive ? 
+    Math.max(0, (breakDuration * 60) - elapsedBreakSeconds) :
+    Math.max(0, (breakInterval * 60) - elapsedBreakSeconds);
+
+  // Actualizar los contadores cuando cambien los intervalos de configuración
+  React.useEffect(() => {
+    if (isTimerStarted) {
+      // Mantener el tiempo transcurrido y recalcular el tiempo restante
+      if (isBreakActive) {
+        // Si está en pausa activa, recalcular el tiempo de pausa restante
+        const newRemainingBreakTime = Math.max(0, (breakDuration * 60) - elapsedBreakSeconds);
+        setBreakTime(newRemainingBreakTime);
+      } else {
+        // Si está en tiempo de trabajo, recalcular el próximo break
+        const newRemainingWorkTime = Math.max(0, (breakInterval * 60) - elapsedBreakSeconds);
+        setNextBreak(newRemainingWorkTime);
+      }
+    }
+  }, [breakInterval, breakDuration, isTimerStarted, isBreakActive, elapsedBreakSeconds, setNextBreak, setBreakTime]);
 
   React.useEffect(() => {
     if (!isTimerStarted) return;
 
     const timer = setInterval(() => {
-      if (isBreakActive) {
-        setBreakTime((prev) => {
-          if (prev <= 1) {
+      setElapsedBreakSeconds((prev) => {
+        const newElapsed = prev + 1;
+        const totalInterval = isBreakActive ? breakDuration * 60 : breakInterval * 60;
+        
+        if (newElapsed >= totalInterval) {
+          if (isBreakActive) {
+            // Terminar pausa activa
             setIsBreakActive(false);
-            setBreakTime(breakDuration * 60);
-            setNextBreak(breakInterval * 60);
-            return breakDuration * 60;
+            return 0; // Reiniciar tiempo transcurrido
+          } else {
+            // Terminar tiempo de trabajo, iniciar pausa
+            setIsBreakActive(true);
+            return 0; // Reiniciar tiempo transcurrido
           }
-          return prev - 1;
-        });
-      } else {
-        setNextBreak((prev) => {
-          if (prev <= 1) {
-            return 0;
-          }
-          return prev - 1;
-        });
-      }
+        }
+        return newElapsed;
+      });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isBreakActive, isTimerStarted, setBreakTime, setIsBreakActive, setNextBreak, breakDuration, breakInterval]);
+  }, [isBreakActive, isTimerStarted, setElapsedBreakSeconds, setIsBreakActive, breakDuration, breakInterval]);
 
   const handleStartBreak = () => {
     setIsBreakActive(true);
     setBreaksTaken((prev) => prev + 1);
+    setElapsedBreakSeconds(0);
     if (notificationsEnabled) {
       onBreakNow();
     }
@@ -82,6 +104,7 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
                 setIsTimerStarted(true);
                 setNextBreak(breakInterval * 60);
                 setBreakTime(breakDuration * 60);
+                setElapsedBreakSeconds(0);
               }}
             >
               Iniciar
@@ -115,7 +138,7 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
                         className="text-success progress-ring"
                         strokeWidth="8"
                         strokeDasharray={58 * 2 * Math.PI}
-                        strokeDashoffset={58 * 2 * Math.PI * (breakTime / (breakDuration * 60))}
+                        strokeDashoffset={58 * 2 * Math.PI * (remainingBreakSeconds / (breakDuration * 60))}
                         strokeLinecap="round"
                         stroke="currentColor"
                         fill="transparent"
@@ -125,7 +148,7 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
                       />
                     </svg>
                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                      <p className="text-2xl font-bold">{formatTime(breakTime)}</p>
+                      <p className="text-2xl font-bold">{formatTime(remainingBreakSeconds)}</p>
                       <p className="text-xs text-default-500">restantes</p>
                     </div>
                   </div>
@@ -156,7 +179,7 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
                         className="text-warning progress-ring"
                         strokeWidth="8"
                         strokeDasharray={58 * 2 * Math.PI}
-                        strokeDashoffset={58 * 2 * Math.PI * (1 - nextBreak / (breakInterval * 60))}
+                        strokeDashoffset={58 * 2 * Math.PI * (1 - remainingBreakSeconds / (breakInterval * 60))}
                         strokeLinecap="round"
                         stroke="currentColor"
                         fill="transparent"
@@ -166,7 +189,7 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
                       />
                     </svg>
                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                      <p className="text-2xl font-bold">{formatTime(nextBreak)}</p>
+                      <p className="text-2xl font-bold">{formatTime(remainingBreakSeconds)}</p>
                       <p className="text-xs text-default-500">restantes</p>
                     </div>
                   </div>
@@ -194,6 +217,7 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
                 setIsBreakActive(false);
                 setBreakTime(breakDuration * 60);
                 setNextBreak(breakInterval * 60);
+                setElapsedBreakSeconds(0);
               }}
             >
               Terminar pausa
@@ -204,7 +228,7 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
               startContent={<Icon icon="lucide:play" />}
               fullWidth
               onPress={handleStartBreak}
-              isDisabled={nextBreak > 0 && nextBreak > (breakInterval - 2) * 60}
+              isDisabled={remainingBreakSeconds > 0 && remainingBreakSeconds > (breakInterval - 2) * 60}
             >
               Iniciar pausa ahora
             </Button>

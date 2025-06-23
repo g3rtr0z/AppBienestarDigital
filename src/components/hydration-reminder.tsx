@@ -7,28 +7,41 @@ import { useSettings } from "../context/settings-context";
 import { motion } from "framer-motion";
 
 export const HydrationReminder: React.FC = () => {
-  const { waterIntake, setWaterIntake, nextReminder, setNextReminder, mostrarRecordatorio, setMostrarRecordatorio } = useAppState();
+  const { waterIntake, setWaterIntake, nextReminder, setNextReminder, mostrarRecordatorio, setMostrarRecordatorio, elapsedHydrationSeconds, setElapsedHydrationSeconds } = useAppState();
   const { addNotification } = useNotifications();
-  const { waterGoal, notificationsEnabled } = useSettings();
+  const { waterGoal, waterReminderInterval, notificationsEnabled } = useSettings();
+
+  // Calcular el tiempo restante basado en el tiempo transcurrido y el intervalo configurado
+  const remainingHydrationSeconds = nextReminder !== null ? 
+    Math.max(0, (waterReminderInterval * 60) - elapsedHydrationSeconds) : null;
+
+  // Actualizar el recordatorio cuando cambie el intervalo de configuración
+  React.useEffect(() => {
+    if (nextReminder !== null) {
+      // Mantener el tiempo transcurrido y recalcular el tiempo restante
+      const newRemainingSeconds = Math.max(0, (waterReminderInterval * 60) - elapsedHydrationSeconds);
+      setNextReminder(newRemainingSeconds);
+    }
+  }, [waterReminderInterval, elapsedHydrationSeconds, setNextReminder]);
 
   React.useEffect(() => {
     // Detener recordatorios si ya se alcanzó la meta
     if (waterIntake >= waterGoal) {
       setNextReminder(null);
+      setElapsedHydrationSeconds(0);
       return;
     }
 
     if (nextReminder === null) return; // si no hay contador activo, no hacer nada
 
-    const REMINDER_INTERVAL = 45 * 60; // 45 minutos
-
     let hasNotified = false;
 
     const timer = setInterval(() => {
-      setNextReminder((prev) => {
-        if (prev === null) return null; // por si cambia a null durante ejecución
-
-        if (prev <= 1) {
+      setElapsedHydrationSeconds((prev) => {
+        const newElapsed = prev + 1;
+        const totalInterval = waterReminderInterval * 60;
+        
+        if (newElapsed >= totalInterval) {
           if (!hasNotified && notificationsEnabled) {
             setMostrarRecordatorio(true);
             addNotification({
@@ -41,15 +54,15 @@ export const HydrationReminder: React.FC = () => {
             hasNotified = true;
             setTimeout(() => setMostrarRecordatorio(false), 10000);
           }
-          return REMINDER_INTERVAL;
+          return 0; // Reiniciar el tiempo transcurrido
         }
         hasNotified = false;
-        return prev - 1;
+        return newElapsed;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [nextReminder, addNotification, setNextReminder, setMostrarRecordatorio, notificationsEnabled, waterIntake, waterGoal]);
+  }, [nextReminder, addNotification, setElapsedHydrationSeconds, setMostrarRecordatorio, notificationsEnabled, waterIntake, waterGoal, waterReminderInterval]);
 
   const handleAddWater = () => {
     if (waterIntake < waterGoal) {
@@ -57,9 +70,10 @@ export const HydrationReminder: React.FC = () => {
 
       // Iniciar el recordatorio solo cuando se registra un vaso
       if (nextReminder === null) {
-        setNextReminder(45 * 60); // iniciar contador 45 minutos
+        setNextReminder(waterReminderInterval * 60); // iniciar contador usando configuración
+        setElapsedHydrationSeconds(0); // reiniciar tiempo transcurrido
       } else {
-        setNextReminder(45 * 60); // reiniciar contador 45 minutos
+        setElapsedHydrationSeconds(0); // reiniciar tiempo transcurrido
       }
 
       if (notificationsEnabled) {
@@ -134,7 +148,7 @@ export const HydrationReminder: React.FC = () => {
             <>
               <p className="text-small text-default-500">Próximo recordatorio en</p>
               <p className="text-xl font-semibold">
-                {Math.floor(nextReminder / 60)}:{(nextReminder % 60).toString().padStart(2, '0')}
+                {Math.floor(remainingHydrationSeconds! / 60)}:{(remainingHydrationSeconds! % 60).toString().padStart(2, '0')}
               </p>
             </>
           )}

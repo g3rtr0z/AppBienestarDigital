@@ -9,6 +9,7 @@ export const Settings: React.FC = () => {
   const {
     screenTimeLimit, setScreenTimeLimit,
     waterGoal, setWaterGoal,
+    waterReminderInterval, setWaterReminderInterval,
     breakInterval, setBreakInterval,
     breakDuration, setBreakDuration,
     notificationsEnabled, setNotificationsEnabled,
@@ -23,6 +24,7 @@ export const Settings: React.FC = () => {
   const handleRestoreDefaults = () => {
     setScreenTimeLimit(8);
     setWaterGoal(8);
+    setWaterReminderInterval(45);
     setBreakInterval(25);
     setBreakDuration(5);
     setNotificationsEnabled(true);
@@ -37,6 +39,7 @@ export const Settings: React.FC = () => {
     const defaultSettings = {
       screenTimeLimit: 8,
       waterGoal: 8,
+      waterReminderInterval: 45,
       breakInterval: 25,
       breakDuration: 5,
       notificationsEnabled: true,
@@ -55,6 +58,7 @@ export const Settings: React.FC = () => {
     const settings = {
       screenTimeLimit,
       waterGoal,
+      waterReminderInterval,
       breakInterval,
       breakDuration,
       notificationsEnabled,
@@ -72,6 +76,7 @@ export const Settings: React.FC = () => {
       const parsed = JSON.parse(savedSettings);
       setScreenTimeLimit(parsed.screenTimeLimit ?? 8);
       setWaterGoal(parsed.waterGoal ?? 8);
+      setWaterReminderInterval(parsed.waterReminderInterval ?? 45);
       setBreakInterval(parsed.breakInterval ?? 25);
       setBreakDuration(parsed.breakDuration ?? 5);
       setNotificationsEnabled(parsed.notificationsEnabled ?? true);
@@ -191,7 +196,11 @@ export const Settings: React.FC = () => {
                   <p className="text-small font-medium mb-2">Intervalo de recordatorio</p>
                   <Select
                     label="Intervalo"
-                    defaultSelectedKeys={["45"]}
+                    selectedKeys={[waterReminderInterval.toString()]}
+                    onSelectionChange={(keys) => {
+                      const selectedKey = Array.from(keys)[0] as string;
+                      setWaterReminderInterval(parseInt(selectedKey));
+                    }}
                   >
                     <SelectItem key="30">Cada 30 minutos</SelectItem>
                     <SelectItem key="45">Cada 45 minutos</SelectItem>

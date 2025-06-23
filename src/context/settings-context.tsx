@@ -5,6 +5,8 @@ interface SettingsContextType {
   setScreenTimeLimit: (value: number) => void;
   waterGoal: number;
   setWaterGoal: (value: number) => void;
+  waterReminderInterval: number;
+  setWaterReminderInterval: (value: number) => void;
   breakInterval: number;
   setBreakInterval: (value: number) => void;
   breakDuration: number;
@@ -30,6 +32,7 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [screenTimeLimit, setScreenTimeLimit] = useState<number>(8);
   const [waterGoal, setWaterGoal] = useState<number>(8);
+  const [waterReminderInterval, setWaterReminderInterval] = useState<number>(45);
   const [breakInterval, setBreakInterval] = useState<number>(25);
   const [breakDuration, setBreakDuration] = useState<number>(5);
   const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(true);
@@ -46,6 +49,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const parsed = JSON.parse(saved);
       if (parsed.screenTimeLimit !== undefined) setScreenTimeLimit(parsed.screenTimeLimit);
       if (parsed.waterGoal !== undefined) setWaterGoal(parsed.waterGoal);
+      if (parsed.waterReminderInterval !== undefined) setWaterReminderInterval(parsed.waterReminderInterval);
       if (parsed.breakInterval !== undefined) setBreakInterval(parsed.breakInterval);
       if (parsed.breakDuration !== undefined) setBreakDuration(parsed.breakDuration);
       if (parsed.notificationsEnabled !== undefined) setNotificationsEnabled(parsed.notificationsEnabled);
@@ -60,6 +64,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const parsed = saved ? JSON.parse(saved) : {};
     parsed.screenTimeLimit = screenTimeLimit;
     parsed.waterGoal = waterGoal;
+    parsed.waterReminderInterval = waterReminderInterval;
     parsed.breakInterval = breakInterval;
     parsed.breakDuration = breakDuration;
     parsed.notificationsEnabled = notificationsEnabled;
@@ -67,7 +72,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     parsed.accessibilityMode = accessibilityMode;
     parsed.theme = theme;
     localStorage.setItem("userSettings", JSON.stringify(parsed));
-  }, [screenTimeLimit, waterGoal, breakInterval, breakDuration, notificationsEnabled, soundEnabled, accessibilityMode, theme]);
+  }, [screenTimeLimit, waterGoal, waterReminderInterval, breakInterval, breakDuration, notificationsEnabled, soundEnabled, accessibilityMode, theme]);
 
   return (
     <SettingsContext.Provider value={{
@@ -75,6 +80,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setScreenTimeLimit,
       waterGoal,
       setWaterGoal,
+      waterReminderInterval,
+      setWaterReminderInterval,
       breakInterval,
       setBreakInterval,
       breakDuration,
