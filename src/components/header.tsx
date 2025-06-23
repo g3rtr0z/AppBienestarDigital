@@ -43,7 +43,7 @@ export const Header: React.FC = () => {
             <NavbarBrand>
               <Icon icon="lucide:activity" className="text-primary text-2xl mr-2" />
               <div>
-                <p className="font-bold text-primary">Bienestar Digital</p>
+                <p className="font-bold text-primary">Vive Offline - Santo Tomas</p>
                 <p className="text-xs text-default-500">v{APP_VERSION}</p>
               </div>
             </NavbarBrand>

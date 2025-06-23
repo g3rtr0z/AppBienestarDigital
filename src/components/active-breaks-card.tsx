@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardBody, CardHeader, CardFooter, Button, Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAppState } from "../context/app-state-context";
 import { useSettings } from "../context/settings-context";
 
@@ -18,7 +18,7 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
     isTimerStarted, setIsTimerStarted,
     elapsedBreakSeconds, setElapsedBreakSeconds
   } = useAppState();
-  const { breakInterval, breakDuration, notificationsEnabled } = useSettings();
+  const { breakInterval, breakDuration, notificationsEnabled, breakStartDelay } = useSettings();
 
   // Calcular el tiempo restante basado en el tiempo transcurrido y la configuración
   const remainingBreakSeconds = isBreakActive ? 
@@ -76,6 +76,32 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
     }
   };
 
+  const recommendations = [
+    "Mantén una postura ergonómica",
+    "Hidrátate regularmente",
+    "Respira profundamente cada 10 minutos",
+    "Mantén el área de trabajo organizada",
+    "Evita distracciones del teléfono",
+    "Estira el cuello y los hombros",
+    "Parpadea con frecuencia para lubricar los ojos"
+  ];
+
+  const [currentRecommendationIndex, setCurrentRecommendationIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    let recommendationTimer: NodeJS.Timeout;
+
+    if (isTimerStarted && !isBreakActive) {
+      recommendationTimer = setInterval(() => {
+        setCurrentRecommendationIndex(prevIndex => (prevIndex + 1) % recommendations.length);
+      }, 30000); // Cambia cada 30 segundos
+    }
+
+    return () => {
+      clearInterval(recommendationTimer);
+    };
+  }, [isTimerStarted, isBreakActive, recommendations.length]);
+
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -113,8 +139,8 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
         </CardBody>
         
         ) : (
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex-1 flex flex-col items-center justify-center">
+          <div className="flex flex-col md:flex-row gap-14 justify-center items-center pl-7">
+            <div className="flex flex-col items-center justify-center">
               {isBreakActive ? (
                 <motion.div 
                   className="text-center"
@@ -201,6 +227,35 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
                 </motion.div>
               )}
             </div>
+
+            {/* Sección de recomendaciones para el estudio */}
+            {!isBreakActive && isTimerStarted && (
+              <div className="w-full md:max-w-xs flex flex-col justify-center">
+                <div className="bg-primary-50 rounded-lg p-4 border border-primary-200 h-auto flex flex-col">
+                  <div className="text-center mb-3">
+                    <Icon icon="lucide:lightbulb" className="text-primary text-xl mx-auto mb-2" />
+                    <h3 className="text-sm font-semibold text-primary">Recomendaciones</h3>
+                  </div>
+                  <div className="flex-grow flex items-center justify-center text-center">
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={currentRecommendationIndex}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.5 }}
+                        className="space-y-2 text-xs text-default-600"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Icon icon="lucide:check-circle" className="text-success text-sm mt-0.5 flex-shrink-0" />
+                          <span>{recommendations[currentRecommendationIndex]}</span>
+                        </div>
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </CardBody>
@@ -228,7 +283,7 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
               startContent={<Icon icon="lucide:play" />}
               fullWidth
               onPress={handleStartBreak}
-              isDisabled={remainingBreakSeconds > 0 && remainingBreakSeconds > (breakInterval - 2) * 60}
+              isDisabled={remainingBreakSeconds > (breakInterval - breakStartDelay) * 60}
             >
               Iniciar pausa ahora
             </Button>

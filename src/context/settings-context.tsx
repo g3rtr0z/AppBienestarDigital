@@ -25,6 +25,10 @@ interface SettingsContextType {
   setActiveBreaksEnabled: (value: boolean) => void;
   hydrationEnabled: boolean;
   setHydrationEnabled: (value: boolean) => void;
+  breakGoal: number;
+  setBreakGoal: (value: number) => void;
+  breakStartDelay: number;
+  setBreakStartDelay: (value: number) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -42,6 +46,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [screenTimeEnabled, setScreenTimeEnabled] = useState<boolean>(true);
   const [activeBreaksEnabled, setActiveBreaksEnabled] = useState<boolean>(true);
   const [hydrationEnabled, setHydrationEnabled] = useState<boolean>(true);
+  const [breakGoal, setBreakGoal] = useState<number>(6);
+  const [breakStartDelay, setBreakStartDelay] = useState<number>(2);
 
   useEffect(() => {
     const saved = localStorage.getItem("userSettings");
@@ -52,6 +58,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (parsed.waterReminderInterval !== undefined) setWaterReminderInterval(parsed.waterReminderInterval);
       if (parsed.breakInterval !== undefined) setBreakInterval(parsed.breakInterval);
       if (parsed.breakDuration !== undefined) setBreakDuration(parsed.breakDuration);
+      if (parsed.breakGoal !== undefined) setBreakGoal(parsed.breakGoal);
+      if (parsed.breakStartDelay !== undefined) setBreakStartDelay(parsed.breakStartDelay);
       if (parsed.notificationsEnabled !== undefined) setNotificationsEnabled(parsed.notificationsEnabled);
       if (parsed.soundEnabled !== undefined) setSoundEnabled(parsed.soundEnabled);
       if (parsed.accessibilityMode !== undefined) setAccessibilityMode(parsed.accessibilityMode);
@@ -67,12 +75,14 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     parsed.waterReminderInterval = waterReminderInterval;
     parsed.breakInterval = breakInterval;
     parsed.breakDuration = breakDuration;
+    parsed.breakGoal = breakGoal;
+    parsed.breakStartDelay = breakStartDelay;
     parsed.notificationsEnabled = notificationsEnabled;
     parsed.soundEnabled = soundEnabled;
     parsed.accessibilityMode = accessibilityMode;
     parsed.theme = theme;
     localStorage.setItem("userSettings", JSON.stringify(parsed));
-  }, [screenTimeLimit, waterGoal, waterReminderInterval, breakInterval, breakDuration, notificationsEnabled, soundEnabled, accessibilityMode, theme]);
+  }, [screenTimeLimit, waterGoal, waterReminderInterval, breakInterval, breakDuration, breakGoal, breakStartDelay, notificationsEnabled, soundEnabled, accessibilityMode, theme]);
 
   return (
     <SettingsContext.Provider value={{
@@ -99,7 +109,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       activeBreaksEnabled,
       setActiveBreaksEnabled,
       hydrationEnabled,
-      setHydrationEnabled
+      setHydrationEnabled,
+      breakGoal,
+      setBreakGoal,
+      breakStartDelay,
+      setBreakStartDelay
     }}>
       {children}
     </SettingsContext.Provider>

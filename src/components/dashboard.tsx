@@ -11,7 +11,7 @@ import { useAppState } from "../context/app-state-context";
 import { motion } from "framer-motion";
 
 export const Dashboard: React.FC = () => {
-  const { screenTimeLimit, screenTimeEnabled, activeBreaksEnabled, hydrationEnabled, notificationsEnabled, waterGoal } = useSettings();
+  const { screenTimeLimit, screenTimeEnabled, activeBreaksEnabled, hydrationEnabled, notificationsEnabled, waterGoal, breakGoal } = useSettings();
   const { addNotification } = useNotifications();
   const { 
     currentScreenTime, 
@@ -61,9 +61,8 @@ export const Dashboard: React.FC = () => {
   };
 
   const getBreaksProgress = () => {
-    // Considerar que 6 pausas al día es óptimo (cada 2-3 horas)
-    const optimalBreaks = 6;
-    const progress = Math.min((breaksTaken / optimalBreaks) * 100, 100);
+    // Usar la meta de pausas del contexto
+    const progress = Math.min((breaksTaken / breakGoal) * 100, 100);
     return Math.round(progress);
   };
 
@@ -154,7 +153,7 @@ export const Dashboard: React.FC = () => {
                   </div>
                   <Progress value={getBreaksProgress()} color={getBreaksStatus().color} className="h-2" />
                   <p className="text-xs text-default-500 mt-1">
-                    {breaksTaken} pausas realizadas hoy
+                    {breaksTaken} de {breakGoal} pausas realizadas hoy
                   </p>
                 </div>
               )}

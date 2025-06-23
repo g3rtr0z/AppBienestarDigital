@@ -18,7 +18,11 @@ export const Settings: React.FC = () => {
     theme, setTheme,
     screenTimeEnabled, setScreenTimeEnabled,
     activeBreaksEnabled, setActiveBreaksEnabled,
-    hydrationEnabled, setHydrationEnabled
+    hydrationEnabled, setHydrationEnabled,
+    breakGoal, 
+    setBreakGoal,
+    breakStartDelay,
+    setBreakStartDelay
   } = useSettings();
 
   const handleRestoreDefaults = () => {
@@ -27,6 +31,8 @@ export const Settings: React.FC = () => {
     setWaterReminderInterval(45);
     setBreakInterval(25);
     setBreakDuration(5);
+    setBreakGoal(6);
+    setBreakStartDelay(2);
     setNotificationsEnabled(true);
     setSoundEnabled(true);
     setAccessibilityMode(false);
@@ -42,6 +48,8 @@ export const Settings: React.FC = () => {
       waterReminderInterval: 45,
       breakInterval: 25,
       breakDuration: 5,
+      breakGoal: 6,
+      breakStartDelay: 2,
       notificationsEnabled: true,
       soundEnabled: true,
       accessibilityMode: false,
@@ -61,6 +69,8 @@ export const Settings: React.FC = () => {
       waterReminderInterval,
       breakInterval,
       breakDuration,
+      breakGoal,
+      breakStartDelay,
       notificationsEnabled,
       soundEnabled,
       accessibilityMode,
@@ -79,6 +89,8 @@ export const Settings: React.FC = () => {
       setWaterReminderInterval(parsed.waterReminderInterval ?? 45);
       setBreakInterval(parsed.breakInterval ?? 25);
       setBreakDuration(parsed.breakDuration ?? 5);
+      setBreakGoal(parsed.breakGoal ?? 6);
+      setBreakStartDelay(parsed.breakStartDelay ?? 2);
       setNotificationsEnabled(parsed.notificationsEnabled ?? true);
       setSoundEnabled(parsed.soundEnabled ?? true);
       setAccessibilityMode(parsed.accessibilityMode ?? false);
@@ -88,7 +100,7 @@ export const Settings: React.FC = () => {
 
   return (
     <motion.div
-      className="space-y-6"
+      className="space-y-6 pb-4"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
@@ -159,6 +171,43 @@ export const Settings: React.FC = () => {
                   onChange={value => setBreakDuration(Array.isArray(value) ? value[0] : value)}
                   className="max-w-md"
                 />
+              </div>
+
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1">
+                  <p className="text-small font-medium mb-2">Meta de pausas diarias</p>
+                  <Select
+                    label="Número de pausas"
+                    selectedKeys={[breakGoal.toString()]}
+                    onSelectionChange={(keys) => {
+                      const selectedKey = Array.from(keys)[0] as string;
+                      setBreakGoal(parseInt(selectedKey, 10));
+                    }}
+                  >
+                    {[...Array(9).keys()].map(i => {
+                      const num = i + 2;
+                      return <SelectItem key={num.toString()}>{`${num} pausas`}</SelectItem>
+                    })}
+                  </Select>
+                </div>
+
+                <div className="flex-1">
+                  <p className="text-small font-medium mb-2">Habilitar 'Pausa ahora' después de</p>
+                  <Select
+                    label="Minutos de espera"
+                    selectedKeys={[breakStartDelay.toString()]}
+                    onSelectionChange={(keys) => {
+                      const selectedKey = Array.from(keys)[0] as string;
+                      setBreakStartDelay(parseInt(selectedKey, 10));
+                    }}
+                  >
+                    {[...Array(6).keys()].map(i => (
+                      <SelectItem key={i.toString()}>
+                        {i === 0 ? "Inmediatamente" : `${i} ${i === 1 ? 'minuto' : 'minutos'}`}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                </div>
               </div>
 
             </>
@@ -249,7 +298,7 @@ export const Settings: React.FC = () => {
         </CardBody>
       </Card>
 
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-2 mb-4">
         <Button variant="flat" color="default" onPress={handleRestoreDefaults}>
           Restaurar valores predeterminados
         </Button>
