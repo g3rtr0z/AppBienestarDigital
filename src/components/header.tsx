@@ -37,14 +37,14 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <div className="bg-white border-b border-divider">
+      <div className="bg-white border-b border-primary-200 shadow-sm">
         <div className="max-w-[1200px] mx-auto">
           <Navbar maxWidth="full" className="border-b-0">
             <NavbarBrand>
               <Icon icon="lucide:activity" className="text-primary text-2xl mr-2" />
               <div>
-                <p className="font-bold text-inherit">Bienestar Digital</p>
-                <p className="text-xs text-gray-500">v{APP_VERSION}</p>
+                <p className="font-bold text-primary">Bienestar Digital</p>
+                <p className="text-xs text-default-500">v{APP_VERSION}</p>
               </div>
             </NavbarBrand>
 
@@ -54,6 +54,7 @@ export const Header: React.FC = () => {
                   isIconOnly 
                   variant="light" 
                   aria-label="Configuraciones"
+                  className="text-default-600 hover:bg-primary-50 hover:text-primary"
                   onPress={() => setSettingsOpen(true)}
                 >
                   <Icon icon="lucide:settings" className="text-xl" />
@@ -68,9 +69,9 @@ export const Header: React.FC = () => {
                       isIconOnly 
                       variant="light" 
                       aria-label="Perfil"
-                      className="w-10 h-10 rounded-full bg-primary text-white"
+                      className="w-10 h-10 rounded-full bg-primary text-white hover:bg-primary-600"
                     >
-                      <Icon icon="lucide:activity" className="text-xl" />
+                      <Icon icon="lucide:user" className="text-xl" />
                     </Button>
                   </DropdownTrigger>
                   <DropdownMenu aria-label="Perfil">
@@ -87,7 +88,7 @@ export const Header: React.FC = () => {
               ) : (
                 // Usuario no autenticado - mostrar botón de perfil que abre directamente el modal
                 <Button 
-                  variant="flat" 
+                  variant="solid" 
                   color="primary"
                   startContent={<Icon icon="lucide:user" />}
                   onPress={() => setAuthModalOpen(true)}

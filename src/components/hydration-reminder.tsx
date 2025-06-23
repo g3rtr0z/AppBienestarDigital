@@ -114,7 +114,7 @@ export const HydrationReminder: React.FC = () => {
               />
               <motion.path
                 d={`M30,${150 - (waterIntake / waterGoal) * 140} L90,${150 - (waterIntake / waterGoal) * 140} L80,150 C80,155 70,160 60,160 C50,160 40,155 40,150 Z`}
-                fill="hsl(var(--heroui-primary-200))"
+                fill="hsl(var(--heroui-info-200))"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.8 }}
                 transition={{ duration: 0.8 }}

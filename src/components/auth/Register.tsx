@@ -124,7 +124,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
           <CardHeader className="pb-3">
             <div className="flex items-center justify-center mb-2">
               <Icon icon="lucide:user-plus" className="text-primary text-xl mr-2" />
-              <h1 className="text-lg font-bold">Crear Cuenta</h1>
+              <h1 className="text-lg font-bold text-primary">Crear Cuenta</h1>
             </div>
           </CardHeader>
           <CardBody className="pt-0">
@@ -134,7 +134,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
                 label="Nombre completo"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                startContent={<Icon icon="lucide:user" className="text-gray-400" />}
+                startContent={<Icon icon="lucide:user" className="text-default-400" />}
                 size="md"
                 variant="bordered"
                 isRequired
@@ -148,7 +148,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
                 label="Email"
                 value={email}
                 onChange={handleEmailChange}
-                startContent={<Icon icon="lucide:mail" className="text-gray-400" />}
+                startContent={<Icon icon="lucide:mail" className="text-default-400" />}
                 size="md"
                 variant="bordered"
                 isRequired
@@ -160,7 +160,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
                   inputWrapper: "w-full input-fixed"
                 }}
               />
-              <p className="text-xs text-gray-500 -mt-2">
+              <p className="text-xs text-default-500 -mt-2">
                 Solo se permiten correos institucionales de Santo Tomás (@alumnos.santotomas.cl o @santotomas.cl)
               </p>
               <Input
@@ -168,7 +168,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
                 label="Contraseña"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                startContent={<Icon icon="lucide:lock" className="text-gray-400" />}
+                startContent={<Icon icon="lucide:lock" className="text-default-400" />}
                 size="md"
                 variant="bordered"
                 isRequired
@@ -182,7 +182,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
                 label="Confirmar contraseña"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                startContent={<Icon icon="lucide:lock" className="text-gray-400" />}
+                startContent={<Icon icon="lucide:lock" className="text-default-400" />}
                 size="md"
                 variant="bordered"
                 isRequired
@@ -193,7 +193,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
               />
               
               {error && (
-                <div className="text-red-500 text-xs bg-red-50 p-2 rounded">
+                <div className="text-danger text-xs bg-danger-50 p-2 rounded border border-danger-200">
                   {error}
                 </div>
               )}
@@ -201,7 +201,8 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                color="primary"
+                className="w-full"
                 size="md"
               >
                 {loading ? 'Creando cuenta...' : 'Crear cuenta'}
@@ -210,12 +211,12 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin, onAuthSucce
             </form>
 
             <div className="mt-4 text-center">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-default-600">
                 ¿Ya tienes cuenta?{' '}
                 <Link 
                   href="#" 
                   onPress={onSwitchToLogin}
-                  className="text-blue-600 hover:text-blue-700 text-xs font-medium"
+                  className="text-primary hover:text-primary-600 text-xs font-medium"
                 >
                   Inicia sesión aquí
                 </Link>

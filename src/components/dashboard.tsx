@@ -121,7 +121,7 @@ export const Dashboard: React.FC = () => {
       >
         <Card className="h-full">
           <CardHeader className="flex gap-3">
-            <Icon icon="lucide:check-circle" className="text-success text-xl" />
+            <Icon icon="lucide:check-circle" className="text-primary text-xl" />
             <div className="flex flex-col">
               <p className="text-md font-semibold">Estado de bienestar</p>
               <p className="text-small text-default-500">Resumen diario</p>

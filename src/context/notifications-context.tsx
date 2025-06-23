@@ -4,7 +4,7 @@ export interface Notification {
   id: string;
   title: string;
   message: string;
-  type: "success" | "info" | "warning" | "error";
+  type: "success" | "info" | "warning" | "error" | "danger" | "primary";
   read: boolean;
 }
 
@@ -24,7 +24,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       id: "1",
       title: "¡Bienvenido!",
       message: "Comienza a monitorear tu bienestar digital.",
-      type: "info",
+      type: "primary",
       read: false
     },
   ]);

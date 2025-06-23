@@ -85,7 +85,7 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
   return (
     <Card className="h-full">
       <CardHeader className="flex gap-3">
-        <Icon icon="lucide:timer" className="text-warning text-xl" />
+        <Icon icon="lucide:timer" className="text-secondary text-xl" />
         <div className="flex flex-col">
           <p className="text-md font-semibold">Pausas activas</p>
           <p className="text-small text-default-500">Técnica Pomodoro</p>
