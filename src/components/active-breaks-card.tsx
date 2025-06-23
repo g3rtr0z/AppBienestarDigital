@@ -139,7 +139,7 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
         </CardBody>
         
         ) : (
-          <div className="flex flex-col md:flex-row gap-14 justify-center items-center pl-7">
+          <div className="flex flex-col md:flex-row gap-8 md:gap-14 justify-center items-center md:pl-7">
             <div className="flex flex-col items-center justify-center">
               {isBreakActive ? (
                 <motion.div 
