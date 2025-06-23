@@ -85,7 +85,7 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
   return (
     <Card className="h-full">
       <CardHeader className="flex gap-3">
-        <Icon icon="lucide:timer" className="text-secondary text-xl" />
+        <Icon icon="lucide:timer" className="text-info text-xl" />
         <div className="flex flex-col">
           <p className="text-md font-semibold">Pausas activas</p>
           <p className="text-small text-default-500">Técnica Pomodoro</p>
@@ -135,7 +135,7 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
                         cy="64"
                       />
                       <circle
-                        className="text-success progress-ring"
+                        className="text-primary progress-ring"
                         strokeWidth="8"
                         strokeDasharray={58 * 2 * Math.PI}
                         strokeDashoffset={58 * 2 * Math.PI * (remainingBreakSeconds / (breakDuration * 60))}
@@ -176,7 +176,7 @@ export const ActiveBreaksCard: React.FC<ActiveBreaksCardProps> = ({ onBreakNow }
                         cy="64"
                       />
                       <circle
-                        className="text-warning progress-ring"
+                        className="text-primary progress-ring"
                         strokeWidth="8"
                         strokeDasharray={58 * 2 * Math.PI}
                         strokeDashoffset={58 * 2 * Math.PI * (1 - remainingBreakSeconds / (breakInterval * 60))}

@@ -350,64 +350,63 @@ export const ScreenTimeCard: React.FC = () => {
         >
           {isScreenTimeTrackingRunning ? "Pausar" : "Iniciar"}
         </Button>
-        <Button
-          color="danger"
-          variant="flat"
-          startContent={<Icon icon="lucide:rotate-ccw" />}
-          fullWidth
-          onClick={() => {
-            setElapsedScreenTimeSeconds(0);
-            setCurrentScreenTime(0);
-            setIsScreenTimeTrackingRunning(false);
-            // Reiniciar historial con ventana deslizante de 10 horas
-            const currentHour = new Date().getHours();
-            const resetHistory = [];
-            
-            // Ventana deslizante de 10 horas
-            const windowSize = 10;
-            let startHour = currentHour - Math.floor(windowSize / 2);
-            let endHour = currentHour + Math.floor(windowSize / 2);
-            
-            // Ajustar si la ventana se sale del rango del día
-            if (startHour < 0) {
-              startHour = 0;
-              endHour = windowSize - 1;
-            } else if (endHour > 23) {
-              endHour = 23;
-              startHour = 23 - windowSize + 1;
-            }
-            
-            // Asegurar que siempre tengamos exactamente 10 horas
-            while (endHour - startHour + 1 < windowSize) {
-              if (startHour > 0) {
-                startHour--;
-              } else if (endHour < 23) {
-                endHour++;
-              } else {
-                break;
+        <Tooltip content="Reiniciar contador">
+          <Button
+            isIconOnly
+            color="danger"
+            variant="solid"
+            onClick={() => {
+              setElapsedScreenTimeSeconds(0);
+              setCurrentScreenTime(0);
+              setIsScreenTimeTrackingRunning(false);
+              // Reiniciar historial con ventana deslizante de 10 horas
+              const currentHour = new Date().getHours();
+              const resetHistory = [];
+              
+              // Ventana deslizante de 10 horas
+              const windowSize = 10;
+              let startHour = currentHour - Math.floor(windowSize / 2);
+              let endHour = currentHour + Math.floor(windowSize / 2);
+              
+              // Ajustar si la ventana se sale del rango del día
+              if (startHour < 0) {
+                startHour = 0;
+                endHour = windowSize - 1;
+              } else if (endHour > 23) {
+                endHour = 23;
+                startHour = 23 - windowSize + 1;
               }
-            }
-            
-            for (let i = startHour; i <= endHour; i++) {
-              const hourLabel = i === 0 ? "12AM" :
-                               i === 12 ? "12PM" : 
-                               i > 12 ? `${i - 12}PM` : `${i}AM`;
-              resetHistory.push({ hour: hourLabel, minutes: 0 });
-            }
-            setScreenTimeHistory(resetHistory);
-            
-            // Limpiar localStorage
-            localStorage.removeItem('screenTimeHistory');
-            localStorage.removeItem('elapsedScreenTimeSeconds');
-            localStorage.removeItem('currentScreenTime');
-            localStorage.removeItem('isScreenTimeTrackingRunning');
-          }}
-        >
-          Reiniciar
-        </Button>
-
+              
+              // Asegurar que siempre tengamos exactamente 10 horas
+              while (endHour - startHour + 1 < windowSize) {
+                if (startHour > 0) {
+                  startHour--;
+                } else if (endHour < 23) {
+                  endHour++;
+                } else {
+                  break;
+                }
+              }
+              
+              for (let i = startHour; i <= endHour; i++) {
+                const hourLabel = i === 0 ? "12AM" :
+                                 i === 12 ? "12PM" : 
+                                 i > 12 ? `${i - 12}PM` : `${i}AM`;
+                resetHistory.push({ hour: hourLabel, minutes: 0 });
+              }
+              setScreenTimeHistory(resetHistory);
+              
+              // Limpiar localStorage
+              localStorage.removeItem('screenTimeHistory');
+              localStorage.removeItem('elapsedScreenTimeSeconds');
+              localStorage.removeItem('currentScreenTime');
+              localStorage.removeItem('isScreenTimeTrackingRunning');
+            }}
+          >
+            <Icon icon="lucide:rotate-ccw" className="text-lg" />
+          </Button>
+        </Tooltip>
       </CardFooter>
-
     </Card>
   );
 };
