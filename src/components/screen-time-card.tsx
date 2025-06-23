@@ -32,6 +32,7 @@ export const ScreenTimeCard: React.FC = () => {
 
   // Estado para rastrear la hora actual
   const [currentHour, setCurrentHour] = useState(new Date().getHours());
+  const [secondsInCurrentHour, setSecondsInCurrentHour] = useState(0);
 
   const remainingTimeSeconds = Math.max(0, (screenTimeLimit * 3600) - elapsedScreenTimeSeconds);
   const remainingHours = Math.floor(remainingTimeSeconds / 3600);
@@ -50,23 +51,16 @@ export const ScreenTimeCard: React.FC = () => {
   // Función para actualizar el historial con datos reales
   const updateScreenTimeHistory = () => {
     const currentHourLabel = getCurrentHourLabel();
-    const minutesInCurrentHour = Math.floor((elapsedScreenTimeSeconds % 3600) / 60);
+    const minutesInCurrentHour = Math.floor(secondsInCurrentHour / 60);
     
     setScreenTimeHistory(prev => {
-      const existingIndex = prev.findIndex(item => item.hour === currentHourLabel);
+      const newHistory = [...prev];
+      const existingIndex = newHistory.findIndex(item => item.hour === currentHourLabel);
       if (existingIndex >= 0) {
         // Actualizar hora existente
-        const updated = [...prev];
-        updated[existingIndex] = { hour: currentHourLabel, minutes: minutesInCurrentHour };
-        return updated;
-      } else {
-        // Agregar nueva hora si está en el rango de 6AM a 10PM
-        const currentHour = new Date().getHours();
-        if (currentHour >= 6 && currentHour <= 22) {
-          return [...prev, { hour: currentHourLabel, minutes: minutesInCurrentHour }];
-        }
-        return prev;
+        newHistory[existingIndex] = { ...newHistory[existingIndex], minutes: minutesInCurrentHour };
       }
+      return newHistory;
     });
   };
 
@@ -74,6 +68,7 @@ export const ScreenTimeCard: React.FC = () => {
     if (isScreenTimeTrackingRunning) {
       screenTimeIntervalRef.current = setInterval(() => {
         setElapsedScreenTimeSeconds((prev) => prev + 1);
+        setSecondsInCurrentHour((prev) => prev + 1);
       }, 1000);
     } else {
       if (screenTimeIntervalRef.current) clearInterval(screenTimeIntervalRef.current);
@@ -98,9 +93,10 @@ export const ScreenTimeCard: React.FC = () => {
       const now = new Date();
       const newHour = now.getHours();
       
-      // Si la hora ha cambiado, actualizar el estado
+      // Si la hora ha cambiado, actualizar el estado y reiniciar el contador de segundos de la hora
       if (newHour !== currentHour) {
         setCurrentHour(newHour);
+        setSecondsInCurrentHour(0);
       }
     };
 
@@ -217,9 +213,9 @@ export const ScreenTimeCard: React.FC = () => {
       const historyItem = screenTimeHistory.find(item => item.hour === hourLabel);
       let minutes = historyItem ? historyItem.minutes : 0;
       
-      // Si es la hora actual y el tracking está activo, mostrar tiempo parcial
-      if (i === currentHour && isScreenTimeTrackingRunning) {
-        const currentMinutes = Math.floor((elapsedScreenTimeSeconds % 3600) / 60);
+      // Si es la hora actual, mostrar el tiempo parcial, incluso si está en pausa
+      if (i === currentHour) {
+        const currentMinutes = Math.floor(secondsInCurrentHour / 60);
         minutes = Math.max(minutes, currentMinutes);
       }
       
@@ -241,7 +237,7 @@ export const ScreenTimeCard: React.FC = () => {
         </div>
       </CardHeader>
       <CardBody>
-        <div className="flex flex-col md:flex-row gap-4 items-center mb-4">
+        <div className="flex flex-col md:flex-row gap-4 items-center mb-4 px-4">
           <div className="flex flex-col items-center">
             <div className="relative w-32 h-32">
               <svg className="w-full h-full">
