@@ -12,22 +12,6 @@ Aplicación web para el seguimiento y mejora del bienestar digital de estudiante
 - **Autenticación**: Sistema de login/registro con Firebase
 - **Dashboard interactivo**: Visualización de métricas de bienestar
 
-## 📁 Estructura del proyecto
-
-```
-AppBienestarDigital/
-├── src/                    # Código fuente de la aplicación
-│   ├── components/         # Componentes React
-│   ├── context/           # Contextos de estado
-│   └── config/            # Configuración de Firebase
-├── PDF/                   # Documentación y generación de PDF
-│   ├── DOCUMENTACION_SISTEMA_BIENESTAR_DIGITAL.md
-│   ├── DOCUMENTACION_SISTEMA_BIENESTAR_DIGITAL.pdf
-│   └── herramientas de generación
-├── plugins/               # Plugins de Vite y Babel
-└── dist/                  # Archivos de distribución
-```
-
 ## 🛠️ Tecnologías
 
 - **Frontend**: React + TypeScript + Vite
