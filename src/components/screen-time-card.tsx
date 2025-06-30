@@ -352,9 +352,18 @@ export const ScreenTimeCard: React.FC = () => {
             color="danger"
             variant="solid"
             onClick={() => {
+              // Primero limpiar localStorage para evitar que se restaure
+              localStorage.removeItem('screenTimeHistory');
+              localStorage.removeItem('elapsedScreenTimeSeconds');
+              localStorage.removeItem('currentScreenTime');
+              localStorage.removeItem('isScreenTimeTrackingRunning');
+              
+              // Reiniciar todos los contadores
               setElapsedScreenTimeSeconds(0);
               setCurrentScreenTime(0);
               setIsScreenTimeTrackingRunning(false);
+              setSecondsInCurrentHour(0);
+              
               // Reiniciar historial con ventana deslizante de 10 horas
               const currentHour = new Date().getHours();
               const resetHistory = [];
@@ -391,12 +400,6 @@ export const ScreenTimeCard: React.FC = () => {
                 resetHistory.push({ hour: hourLabel, minutes: 0 });
               }
               setScreenTimeHistory(resetHistory);
-              
-              // Limpiar localStorage
-              localStorage.removeItem('screenTimeHistory');
-              localStorage.removeItem('elapsedScreenTimeSeconds');
-              localStorage.removeItem('currentScreenTime');
-              localStorage.removeItem('isScreenTimeTrackingRunning');
             }}
           >
             <Icon icon="lucide:rotate-ccw" className="text-lg" />
